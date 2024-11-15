@@ -25,3 +25,13 @@ body {
     text-wrap: balance;
   }
 }
+
+@media (max-width: 640px) {
+  .w-64 {
+    /* Sidebar expands for mobile */
+  }
+  .hidden {
+    /* Hidden sidebar for mobile */
+  }
+}
+
