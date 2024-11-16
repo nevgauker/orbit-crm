@@ -1,3 +1,4 @@
+import Video from "@/components/video";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -7,14 +8,7 @@ function HomePage() {
       <h1 className="text-5xl font-bold text-gray-800 mb-4">OrbitCRM</h1>
       <p className="text-xl text-gray-600 mb-8">The ultimate platform for building and nurturing customer relationships.</p>
 
-      <Image
-        height={256}
-        width={256}
-        src="/orbitcrm-hero.jpg" // Placeholder image path; add an actual image in public folder
-        alt="OrbitCRM"
-        objectFit="cover"
-        className="rounded-lg shadow-lg"
-      />
+      <Video filePath={"orbit-video.mp4"} type={"video/mp4"} height={"400"} width={"400"} />
 
 
       <Link className="bg-blue-600 text-white px-6 py-3 rounded-full text-lg font-semibold hover:bg-blue-700" href="/dashboard">
