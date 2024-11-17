@@ -6,7 +6,7 @@ export async function GET(req: Request) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const token = authHeader.split(" ")[1]
+    // const token = authHeader.split(" ")[1]
 
     try {
         // Validate token and fetch user (replace with your auth logic)

@@ -9,6 +9,7 @@ export async function POST(req: Request) {
         });
         return NextResponse.json(newLead, { status: 201 });
     } catch (error) {
+        console.log(error)
         return NextResponse.json({ error: 'Failed to create lead' }, { status: 500 });
     }
 }
@@ -18,6 +19,7 @@ export async function GET() {
         const leads = await db.lead.findMany();
         return NextResponse.json(leads);
     } catch (error) {
+        console.log(error)
         return NextResponse.json({ error: 'Failed to fetch leads' }, { status: 500 });
     }
 }

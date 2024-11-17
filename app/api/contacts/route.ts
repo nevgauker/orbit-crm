@@ -20,6 +20,7 @@ export async function GET() {
         const contacts = await db.contact.findMany();
         return NextResponse.json(contacts)
     } catch (error) {
+        console.log(error)
         return NextResponse.json({ error: 'Failed to fetch contacts' }, { status: 500 })
     }
 }

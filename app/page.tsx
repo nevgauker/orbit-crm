@@ -1,6 +1,6 @@
 import Video from "@/components/video";
-import { getAllUsers } from "@/db/user";
-import Image from "next/image";
+// import { getAllUsers } from "@/db/user";
+// import Image from "next/image";
 import Link from "next/link";
 
 function HomePage() {
