@@ -1,8 +1,10 @@
 import Video from "@/components/video";
+import { getAllUsers } from "@/db/user";
 import Image from "next/image";
 import Link from "next/link";
 
 function HomePage() {
+
   return (
     <div className="flex flex-col items-center justify-center h-screen bg-gray-100 p-4 text-center">
       <h1 className="text-5xl font-bold text-gray-800 mb-4">OrbitCRM</h1>

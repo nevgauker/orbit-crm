@@ -13,16 +13,49 @@ datasource db {
   url      = env("DATABASE_URL") // Ensure DATABASE_URL points to your MongoDB instance
 }
 
+enum Permission {
+  // Permissions for Contact model
+  create_contact
+  update_contact
+  delete_contact
+
+  // Permissions for Lead model
+  create_lead
+  update_lead
+  delete_lead
+
+  // Permissions for Opportunity model
+  create_opportunity
+  update_opportunity
+  delete_opportunity
+
+  // Permissions for Task model
+  create_task
+  update_task
+  delete_task
+
+  // Permissions for Email model
+  create_email
+  update_email
+  delete_email
+
+  // Permissions for Report model
+  create_report
+  update_report
+  delete_report
+}
+
 model User {
-  id        String    @id @default(auto()) @map("_id") @db.ObjectId
-  name      String
-  email     String    @unique
-  password  String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  contacts  Contact[]
-  leads     Lead[]
-  tasks     Task[]
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  name        String
+  email       String       @unique
+  password    String
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  permissions Permission[] @default([create_contact, update_contact, delete_contact, create_lead, update_lead, delete_lead, create_opportunity, update_opportunity, delete_opportunity, create_task, update_task, delete_task, create_email, update_email, delete_email, create_report, update_report, delete_report])
+  contacts    Contact[]
+  leads       Lead[]
+  tasks       Task[]
 
   Opportunity Opportunity[]
 
