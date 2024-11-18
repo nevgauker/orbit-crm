@@ -22,8 +22,9 @@ const SignUpPage = () => {
             if (response.status === 201) {
                 router.push("/signin");
             }
-        } catch (err: any) {
-            setError(err.response?.data?.error || "Something went wrong.");
+        } catch (err) {
+            console.log(err)
+            // setError(err.response?.data?.error || "Something went wrong.");
         }
     }
 

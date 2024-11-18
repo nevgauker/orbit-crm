@@ -27,9 +27,10 @@ const SignInPage = () => {
                 localStorage.setItem("token", token); // Store token
                 router.push("/dashboard"); // Redirect after successful login
             }
-        } catch (err: any) {
+        } catch (err) {
             setLoading(false)
-            setError(err.response?.data?.error || "Invalid email or password.");
+            console.log(err)
+            // setError(err.response?.data?.error || "Invalid email or password.");
         }
     }
 

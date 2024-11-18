@@ -1,15 +1,36 @@
 'use client'
-import { LeadForm } from '@/components/forms/lead_rom'
-import { createLead } from '@/db/lead'
+import { LeadForm, LeadFormValues } from '@/components/forms/lead_rom'
+import { useAuth } from '@/contexts/auth_context'
+import apiClient from '@/utils/api_client'
 import { useRouter } from 'next/navigation'
 
 const CreateLeadPage = () => {
     const router = useRouter()
+    const { user } = useAuth()
 
-    const handleLeadSubmit = async (data: any) => {
-        await createLead(data); // Call data-layer function
-        router.push('/leads'); // Redirect to leads list
-    };
+
+    const handleLeadSubmit = async (data: LeadFormValues) => {
+
+        if (!user?.id) {
+            console.log("User not authenticated. Please sign in.")
+            return
+        }
+
+        try {
+            const payload = {
+                ...data,
+                ownerId: user.id, // Add ownerId from context
+            };
+            // Make a POST request to the API route to create the contact
+            await apiClient.post('/leads', payload);
+
+            // Redirect to the contacts list after successful submission
+            router.push('/leads');
+        } catch (error) {
+            console.error('Error creating contact:', error);
+            // Optionally show an error message to the user
+        }
+    }
 
     return (
         <div className="p-6">

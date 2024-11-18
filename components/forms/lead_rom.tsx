@@ -2,6 +2,7 @@
 import { z } from 'zod';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { LeadStatus } from '@prisma/client';
 
 const leadSchema = z.object({
     firstName: z.string().min(1, 'First name is required'),
@@ -11,7 +12,16 @@ const leadSchema = z.object({
     status: z.enum(['New', 'Contacted', 'Qualified', 'Converted']),
 });
 
-type LeadFormValues = z.infer<typeof leadSchema>;
+// export type LeadFormValues = z.infer<typeof leadSchema>;
+
+export type LeadFormValues = {
+    firstName: string
+    lastName: string
+    email: string
+    status: LeadStatus
+    phone?: string
+};
+
 
 interface LeadFormProps {
     onSubmit: (data: LeadFormValues) => void;

@@ -1,19 +1,10 @@
 "use client";
 
 import Sidebar from '@/components/navigation/sidebar';
-import { useRouter } from "next/navigation";
 import { useAuth } from '@/contexts/auth_context';
 
 export default function ProtectedLayout({ children }: { children: React.ReactNode }) {
-  const { loading, setUser } = useAuth();
-  const router = useRouter();
-
-  const handleSignOut = () => {
-    // Clear the token and reset the user
-    localStorage.removeItem("token");
-    setUser(null);
-    router.push("/signin");
-  }
+  const { loading } = useAuth();
 
   return (
     <div className="flex h-screen">
