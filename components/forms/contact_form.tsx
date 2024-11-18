@@ -11,7 +11,7 @@ const contactSchema = z.object({
     company: z.string().optional(),
 })
 
-type ContactFormValues = z.infer<typeof contactSchema>;
+export type ContactFormValues = z.infer<typeof contactSchema>;
 
 interface ContactFormProps {
     onSubmit: (data: ContactFormValues) => void;

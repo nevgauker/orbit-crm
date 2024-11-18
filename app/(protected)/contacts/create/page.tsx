@@ -1,15 +1,27 @@
 'use client'
-import { ContactForm } from '@/components/forms/contact_form'
+import { ContactForm, ContactFormValues } from '@/components/forms/contact_form'
 import { useRouter } from 'next/navigation'
-import axios from 'axios';
+import apiClient from '@/utils/api_client';
+import { useAuth } from '@/contexts/auth_context';
 
 const CreateContactPage = () => {
     const router = useRouter()
+    const { user } = useAuth()
 
-    const handleContactSubmit = async (data: any) => {
+
+    const handleContactSubmit = async (data: ContactFormValues) => {
+        if (!user?.id) {
+            console.log("User not authenticated. Please sign in.")
+            return
+        }
         try {
+
+            const payload = {
+                ...data,
+                ownerId: user.id, // Add ownerId from context
+            };
             // Make a POST request to the API route to create the contact
-            await axios.post('/api/contacts', data);
+            await apiClient.post('/contacts', payload);
 
             // Redirect to the contacts list after successful submission
             router.push('/contacts');
@@ -28,3 +40,5 @@ const CreateContactPage = () => {
 };
 
 export default CreateContactPage
+
+

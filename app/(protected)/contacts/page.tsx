@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import Link from 'next/link';
+import apiClient from '@/utils/api_client';
 
 interface Contact {
     id: string;
@@ -22,7 +22,7 @@ const ContactsPage = () => {
         // Fetch all contacts when the component loads
         const fetchContacts = async () => {
             try {
-                const response = await axios.get('/api/contacts');
+                const response = await apiClient.get('/contacts');
                 setContacts(response.data);
                 setFilteredContacts(response.data); // Initialize filtered contacts with all data
             } catch (error) {

@@ -1,13 +1,13 @@
 
-import db from '@/db/db';
+import { createContact, getAllContacts } from '@/db/contact';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
     try {
         const data = await req.json();
-        const newContact = await db.contact.create({
+        const newContact = await createContact(
             data,
-        })
+        )
         return NextResponse.json(newContact, { status: 201 });
     } catch (error) {
         console.log(error)
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
 
 export async function GET() {
     try {
-        const contacts = await db.contact.findMany();
+        const contacts = await getAllContacts()
         return NextResponse.json(contacts)
     } catch (error) {
         console.log(error)

@@ -20,6 +20,10 @@ export const getContactsByUser = async (ownerId: string) => {
     })
 }
 
+export const getAllContacts = async () => {
+    return db.contact.findMany({})
+}
+
 export const updateContact = async (id: string, data: Partial<{
     firstName: string;
     lastName: string;

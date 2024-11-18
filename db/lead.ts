@@ -2,17 +2,36 @@ import { LeadStatus } from '@prisma/client';
 import db from './db';
 
 
-export const createLead = async (data: {
+export const createLead = async ({
+    firstName,
+    lastName,
+    email,
+    phone,
+    status = LeadStatus.NEW,
+    ownerId,
+}: {
     firstName: string
     lastName: string
     email: string
     phone?: string
-    status: LeadStatus
+    status?: LeadStatus
     ownerId: string
 }) => {
     return db.lead.create({
-        data,
+        data: {
+            firstName,
+            lastName,
+            email,
+            phone,
+            status,
+            ownerId,
+        },
     })
+}
+
+//include all sources , form example googleForm
+export const getAllLeads = async () => {
+    return db.lead.findMany({})
 }
 
 export const getLeadsByUser = async (ownerId: string) => {
