@@ -13,55 +13,50 @@ datasource db {
   url      = env("DATABASE_URL") // Ensure DATABASE_URL points to your MongoDB instance
 }
 
-enum Permission {
-  // Permissions for Contact model
-  create_contact
-  update_contact
-  delete_contact
-
-  // Permissions for Lead model
-  create_lead
-  update_lead
-  delete_lead
-
-  // Permissions for Opportunity model
-  create_opportunity
-  update_opportunity
-  delete_opportunity
-
-  // Permissions for Task model
-  create_task
-  update_task
-  delete_task
-
-  // Permissions for Email model
-  create_email
-  update_email
-  delete_email
-
-  // Permissions for Report model
-  create_report
-  update_report
-  delete_report
+enum Role {
+  OWNER
+  ADMIN
+  MEMBER
 }
 
 model User {
-  id          String       @id @default(auto()) @map("_id") @db.ObjectId
+  id          String        @id @default(auto()) @map("_id") @db.ObjectId
   name        String
-  email       String       @unique
+  email       String        @unique
   password    String
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
-  permissions Permission[] @default([create_contact, update_contact, delete_contact, create_lead, update_lead, delete_lead, create_opportunity, update_opportunity, delete_opportunity, create_task, update_task, delete_task, create_email, update_email, delete_email, create_report, update_report, delete_report])
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
   contacts    Contact[]
   leads       Lead[]
   tasks       Task[]
-
+  roles       TeamRole[]
   Opportunity Opportunity[]
+  Email       Email[]
+  Report      Report[]
 
-  Email Email[]
+  Team Team[]
+}
 
-  Report Report[]
+model TeamRole {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String   @db.ObjectId
+  teamId    String   @db.ObjectId
+  role      Role
+  user      User     @relation(fields: [userId], references: [id])
+  team      Team     @relation(fields: [teamId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@unique([userId, teamId]) // Ensure a user can't have duplicate roles in the same team
+}
+
+model Team {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  name      String
+  ownerId   String     @db.ObjectId // Reference to the User who owns the team
+  owner     User       @relation(fields: [ownerId], references: [id])
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  members   TeamRole[]
 }
 
 model Contact {

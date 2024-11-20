@@ -2,6 +2,7 @@
 import React, { useState } from "react"
 import axios from "axios";
 import { useRouter } from "next/navigation"
+import Link from "next/link";
 
 const SignUpPage = () => {
     const router = useRouter();
@@ -29,7 +30,7 @@ const SignUpPage = () => {
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
             <form
                 onSubmit={handleSubmit}
                 className="bg-white p-6 rounded shadow-md w-full max-w-md"
@@ -90,6 +91,8 @@ const SignUpPage = () => {
                     Sign Up
                 </button>
             </form>
+            <span>Already have a user? <Link className='underline' href={"/signin"}>Sign in here</Link>  </span>
+
         </div>
     )
 }

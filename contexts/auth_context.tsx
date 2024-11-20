@@ -3,12 +3,14 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import apiClient from "@/utils/api_client";
+import { User } from "@prisma/client";
 
-type User = {
-    id: string;
-    name: string;
-    email: string;
-};
+// type User = {
+//     id: string;
+//     name: string;
+//     email: string;
+//     permissions: Permission[]
+// };
 
 type AuthContextType = {
     user: User | null;

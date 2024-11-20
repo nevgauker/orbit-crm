@@ -1,5 +1,10 @@
+'use client'
+import { useAuth } from "@/contexts/auth_context"
 
 function SettingsPage() {
+
+    const { user } = useAuth()
+    console.log(user)
     return (
         <div className="p-6">
             <h1 className="text-3xl font-bold text-gray-800 mb-6">Settings</h1>
@@ -14,6 +19,7 @@ function SettingsPage() {
                             type="text"
                             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                             placeholder="John Doe"
+                            value={user?.name}
                         />
                     </div>
                     <div>
@@ -22,6 +28,7 @@ function SettingsPage() {
                             type="email"
                             className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
                             placeholder="john.doe@example.com"
+                            value={user?.email}
                         />
                     </div>
                 </div>
@@ -51,6 +58,15 @@ function SettingsPage() {
                             Receive SMS notifications
                         </label>
                     </div>
+                </div>
+            </section>
+            {/* Account Permissions Section */}
+            <section className="bg-white shadow rounded-lg p-6">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">Account Permissions</h2>
+                <div className="space-y-4">
+                    <ul>
+                        {user?.permissions?.map((permission) => <li>{permission}</li>)}
+                    </ul>
                 </div>
             </section>
 
