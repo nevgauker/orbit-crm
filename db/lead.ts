@@ -1,3 +1,4 @@
+import { Team } from '@prisma/client';
 import { LeadStatus } from '@prisma/client';
 import db from './db';
 
@@ -8,14 +9,14 @@ export const createLead = async ({
     email,
     phone,
     status = LeadStatus.NEW,
-    ownerId,
+    teamId,
 }: {
     firstName: string
     lastName: string
     email: string
     phone?: string
     status?: LeadStatus
-    ownerId: string
+    teamId: string
 }) => {
     return db.lead.create({
         data: {
@@ -24,21 +25,17 @@ export const createLead = async ({
             email,
             phone,
             status,
-            ownerId,
+            teamId,
         },
     })
 }
 
-//include all sources , form example googleForm
-export const getAllLeads = async () => {
-    return db.lead.findMany({})
-}
-
-export const getLeadsByUser = async (ownerId: string) => {
+export const getLeadsByTeam = async (teamId: string) => {
     return db.lead.findMany({
-        where: { ownerId },
+        where: { teamId },
     })
 }
+
 
 export const updateLead = async (id: string, data: Partial<{
     firstName: string;
@@ -48,7 +45,9 @@ export const updateLead = async (id: string, data: Partial<{
     status: LeadStatus;
 }>) => {
     return db.lead.update({
-        where: { id },
+        where: {
+            id
+        },
         data
     })
 }

@@ -1,4 +1,4 @@
-import { createLead, getAllLeads } from '@/db/lead';
+import { createLead, getLeadsByTeam } from '@/db/lead';
 import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
@@ -12,9 +12,18 @@ export async function POST(req: Request) {
     }
 }
 
-export async function GET() {
+export async function GET(request: Request) {
+
+
+    const { searchParams } = new URL(request.url)
+    const teamId = searchParams.get("teamId")
+
+    if (!teamId) {
+        return new Response(JSON.stringify({ error: "teamId is required" }), { status: 400 });
+    }
+
     try {
-        const leads = await getAllLeads()
+        const leads = await getLeadsByTeam(teamId)
         return NextResponse.json(leads)
     } catch (error) {
         console.log(error)

@@ -3,11 +3,13 @@ import React, { useState } from "react"
 import axios from "axios";
 import { useRouter } from "next/navigation"
 import Link from "next/link";
+import ActivityLoader from "@/components/activity_loader";
 
 const SignUpPage = () => {
     const router = useRouter();
     const [formData, setFormData] = useState({ name: "", email: "", password: "" });
     const [error, setError] = useState<string | null>(null);
+    const [loading, setLoading] = useState(false)
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
@@ -17,6 +19,7 @@ const SignUpPage = () => {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         setError(null)
+        setLoading(true)
 
         try {
             const response = await axios.post("/api/auth/signup", formData);
@@ -25,13 +28,14 @@ const SignUpPage = () => {
             }
         } catch (err) {
             console.log(err)
+            setLoading(false)
             // setError(err.response?.data?.error || "Something went wrong.");
         }
     }
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-            <form
+            {loading ? <ActivityLoader /> : <><form
                 onSubmit={handleSubmit}
                 className="bg-white p-6 rounded shadow-md w-full max-w-md"
             >
@@ -91,7 +95,10 @@ const SignUpPage = () => {
                     Sign Up
                 </button>
             </form>
-            <span>Already have a user? <Link className='underline' href={"/signin"}>Sign in here</Link>  </span>
+                <span>Already have a user? <Link className='underline' href={"/signin"}>Sign in here</Link>  </span>
+
+            </>
+            }
 
         </div>
     )

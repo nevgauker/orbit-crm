@@ -44,7 +44,7 @@ const SignInPage = () => {
                 loading ? (
                     <ActivityLoader />
                 )
-                    : (
+                    : (<>
                         <form
                             onSubmit={handleSubmit}
                             className="bg-white p-6 rounded shadow-md w-full max-w-md"
@@ -90,9 +90,10 @@ const SignInPage = () => {
                                 Sign In
                             </button>
                         </form>
+                        <span>Do not have a user? <Link className='underline' href={"/signup"}>Sign up here</Link>  </span>
+                    </>
                     )
             }
-            <span>Do not have a user? <Link className='underline' href={"/signup"}>Sign up here</Link>  </span>
         </div>
     )
 }

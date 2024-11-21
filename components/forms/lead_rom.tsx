@@ -9,8 +9,9 @@ const leadSchema = z.object({
     lastName: z.string().min(1, 'Last name is required'),
     email: z.string().email('Invalid email address'),
     phone: z.string().optional(),
-    status: z.enum(['New', 'Contacted', 'Qualified', 'Converted']),
+    status: z.enum(['NEW', 'CONTACTED', 'QUALIFIED', 'LOST']),
 });
+
 
 // export type LeadFormValues = z.infer<typeof leadSchema>;
 
@@ -60,14 +61,13 @@ export const LeadForm = ({ onSubmit }: LeadFormProps) => {
                 <label htmlFor="phone" className="block text-sm font-medium">Phone</label>
                 <input id="phone" {...register('phone')} className="w-full border px-3 py-2" />
             </div>
-
             <div>
                 <label htmlFor="status" className="block text-sm font-medium">Status</label>
                 <select id="status" {...register('status')} className="w-full border px-3 py-2">
-                    <option value="New">New</option>
-                    <option value="Contacted">Contacted</option>
-                    <option value="Qualified">Qualified</option>
-                    <option value="Converted">Converted</option>
+                    <option value={LeadStatus.NEW}>New</option>
+                    <option value={LeadStatus.CONTACTED}>Contacted</option>
+                    <option value={LeadStatus.QUALIFIED}>Qualified</option>
+                    <option value={LeadStatus.LOST}>Lost</option>
                 </select>
                 {errors.status && <p className="text-red-600 text-sm">{errors.status.message}</p>}
             </div>

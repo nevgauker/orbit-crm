@@ -49,7 +49,7 @@ export default function Sidebar() {
                         <Link href={`/contacts/${teamId}`} className="truncate">
                             {isCollapsed ? <Image src={'/contacts.png'} alt={'dashboard'} height={100} width={100} /> : 'Contacts'}
                         </Link>
-                        <Link href="/leads" className="truncate">
+                        <Link href={`/leads/${teamId}`} className="truncate">
                             {isCollapsed ? <Image src={'/leads.png'} alt={'dashboard'} height={100} width={100} /> : 'Leads'}
                         </Link>
                         <Link href="/opportunities" className="truncate">
