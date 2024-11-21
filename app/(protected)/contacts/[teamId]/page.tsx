@@ -13,16 +13,17 @@ interface Contact {
     company?: string;
 }
 
-const ContactsPage = () => {
+const ContactsPage = ({ params }: { params: { teamId: string } }) => {
     const [contacts, setContacts] = useState<Contact[]>([])
     const [filteredContacts, setFilteredContacts] = useState<Contact[]>([])
     const [search, setSearch] = useState('')
+    const { teamId } = params
 
     useEffect(() => {
         // Fetch all contacts when the component loads
         const fetchContacts = async () => {
             try {
-                const response = await apiClient.get('/contacts');
+                const response = await apiClient.get(`/contacts?teamId=${teamId}`)
                 setContacts(response.data);
                 setFilteredContacts(response.data); // Initialize filtered contacts with all data
             } catch (error) {
@@ -55,7 +56,7 @@ const ContactsPage = () => {
             <div className="flex justify-between items-center mb-4">
                 <h1 className="text-2xl font-bold">Contacts</h1>
                 <Link
-                    href="/contacts/create"
+                    href={`/contacts/create/${teamId}`}
                     className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
                 >
                     Create Contact

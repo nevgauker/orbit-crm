@@ -7,21 +7,17 @@ export const createContact = async (data: {
     email: string;
     phone?: string;
     company?: string;
-    ownerId: string;
+    teamId: string;
 }) => {
     return db.contact.create({
         data,
     })
 }
 
-export const getContactsByUser = async (ownerId: string) => {
+export const getContactsByTeam = async (teamId: string) => {
     return db.contact.findMany({
-        where: { ownerId },
+        where: { teamId },
     })
-}
-
-export const getAllContacts = async () => {
-    return db.contact.findMany({})
 }
 
 export const updateContact = async (id: string, data: Partial<{

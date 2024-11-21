@@ -4,11 +4,10 @@ import { useRouter } from 'next/navigation'
 import apiClient from '@/utils/api_client';
 import { useAuth } from '@/contexts/auth_context';
 
-const CreateContactPage = () => {
+const CreateContactPage = ({ params }: { params: { teamId: string } }) => {
     const router = useRouter()
     const { user } = useAuth()
-
-
+    const { teamId } = params
     const handleContactSubmit = async (data: ContactFormValues) => {
         if (!user?.id) {
             console.log("User not authenticated. Please sign in.")
@@ -18,13 +17,13 @@ const CreateContactPage = () => {
 
             const payload = {
                 ...data,
-                ownerId: user.id, // Add ownerId from context
+                teamId, // Add ownerId from context
             };
             // Make a POST request to the API route to create the contact
             await apiClient.post('/contacts', payload);
 
             // Redirect to the contacts list after successful submission
-            router.push('/contacts');
+            router.push(`/contacts/${teamId}`);
         } catch (error) {
             console.error('Error creating contact:', error);
             // Optionally show an error message to the user

@@ -3,35 +3,37 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import apiClient from "@/utils/api_client";
-import { User } from "@prisma/client";
-
-// type User = {
-//     id: string;
-//     name: string;
-//     email: string;
-//     permissions: Permission[]
-// };
+import { Team, User } from "@prisma/client";
+import { UserResult } from "@/types/userWithRoles";
+import { number } from "zod";
 
 type AuthContextType = {
-    user: User | null;
-    loading: boolean;
-    setUser: (user: User | null) => void;
+    user: UserResult
+    loading: boolean
+    setUser: (user: UserResult) => void
+    currentTeam: number
+    setCurrentTeam: (index: number) => void
 };
 
 const AuthContext = createContext<AuthContextType>({
     user: null,
     loading: false,
     setUser: () => { },
+    currentTeam: 0,
+    setCurrentTeam: () => { }
+
 });
 
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [user, setUser] = useState<User | null>(null);
-    const [loading] = useState(false);
+    const [user, setUser] = useState<UserResult>(null)
+    const [loading] = useState(false)
+    const [currentTeam, setCurrentTeam] = useState(0)
     const [initializing, setInitializing] = useState(true);
     const router = useRouter();
     const pathname = usePathname();
+
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -54,7 +56,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 apiClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
                 // Fetch user data
-                const { data } = await apiClient.get<User>("/protected/me");
+                const { data } = await apiClient.get<UserResult>("/protected/me");
                 setUser(data);
             } catch (error) {
                 console.error("Authentication check failed:", error);
@@ -78,7 +80,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     return (
-        <AuthContext.Provider value={{ user, loading, setUser }}>
+        <AuthContext.Provider value={{ user, loading, setUser, currentTeam, setCurrentTeam }}>
             {children}
         </AuthContext.Provider>
     );

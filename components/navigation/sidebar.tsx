@@ -8,16 +8,17 @@ import { useAuth } from '@/contexts/auth_context';
 
 export default function Sidebar() {
     const [isCollapsed, setIsCollapsed] = useState(false)
-    const { setUser } = useAuth();
+    const { setUser, user, currentTeam, setCurrentTeam } = useAuth();
     const router = useRouter();
-
-
     const handleSignOut = () => {
         // Clear the token and reset the user
         localStorage.removeItem("token")
         setUser(null)
         router.push("/signin")
     }
+
+    const teamId = user?.roles[currentTeam].id
+
 
     return (
         <div className="flex h-screen">
@@ -45,7 +46,7 @@ export default function Sidebar() {
                         <Link href="/dashboard" className="truncate">
                             {isCollapsed ? <Image src={'/dashboard.png'} alt={'dashboard'} height={100} width={100} /> : 'Dashboard'}
                         </Link>
-                        <Link href="/contacts" className="truncate">
+                        <Link href={`/contacts/${teamId}`} className="truncate">
                             {isCollapsed ? <Image src={'/contacts.png'} alt={'dashboard'} height={100} width={100} /> : 'Contacts'}
                         </Link>
                         <Link href="/leads" className="truncate">
@@ -74,10 +75,6 @@ export default function Sidebar() {
                 <div>
                 </div>
             </div>
-
-
-
-
         </div>
     );
 }

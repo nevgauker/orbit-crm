@@ -61,11 +61,16 @@ function SettingsPage() {
                 </div>
             </section>
             {/* Account Permissions Section */}
-            <section className="bg-white shadow rounded-lg p-6">
-                <h2 className="text-xl font-semibold text-gray-800 mb-4">Account Permissions</h2>
+            <section className="bg-white shadow rounded-lg p-6 mb-6">
+                <h2 className="text-xl font-semibold text-gray-800 mb-4">Teams</h2>
                 <div className="space-y-4">
                     <ul>
-                        {user?.permissions?.map((permission) => <li>{permission}</li>)}
+                        {user?.roles.map((role) => <div className="flex space-x-2">
+                            <div>{role.role}</div>
+                            <div>{role.team.name}</div>
+                        </div>)}
+
+
                     </ul>
                 </div>
             </section>

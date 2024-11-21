@@ -1,31 +1,55 @@
+import { UserResult } from "@/types/userWithRoles";
 import db from "./db";
 
 export const createUser = async (data: { name: string; email: string; password: string }) => {
     const user = db.user.create({
-        data,
+        data, include: {
+            roles: {
+                include: {
+                    team: true,
+                }
+            }
+        }
     })
 
     return user
-
 }
 
 export const getUserByEmail = async (email: string) => {
     return db.user.findUnique({
-        where: { email },
+        where: { email }, include: {
+            roles: {
+                include: {
+                    team: true,
+                }
+            }
+        }
     })
 }
 
 
 export const getUserById = async (id: string) => {
     return db.user.findUnique({
-        where: { id },
+        where: { id }, include: {
+            roles: {
+                include: {
+                    team: true,
+                }
+            }
+        }
     })
 }
 
 export const updateUser = async (id: string, data: Partial<{ name: string; email: string; password: string }>) => {
     return db.user.update({
         where: { id },
-        data,
+        data, include: {
+            roles: {
+                include: {
+                    team: true,
+                }
+            }
+        }
     })
 }
 
