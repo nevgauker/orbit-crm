@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
         const checkAuth = async () => {
-            const publicRoutes = ["/", "/signin", "/signup"]
+            const publicRoutes = ["/", "/signin", "/signup", "/pricing"]
             const isPublicRoute = publicRoutes.includes(pathname)
 
             try {
