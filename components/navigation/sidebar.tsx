@@ -43,7 +43,7 @@ export default function Sidebar() {
                 {/* Navigation */}
                 <nav className="flex flex-col  h-screen justify-between">
                     <div className='flex flex-col space-y-4'>
-                        <Link href="/dashboard" className="truncate">
+                        <Link href={`/dashboard/${teamId}`} className="truncate">
                             {isCollapsed ? <Image src={'/dashboard.png'} alt={'dashboard'} height={100} width={100} /> : 'Dashboard'}
                         </Link>
                         <Link href={`/contacts/${teamId}`} className="truncate">
@@ -52,16 +52,16 @@ export default function Sidebar() {
                         <Link href={`/leads/${teamId}`} className="truncate">
                             {isCollapsed ? <Image src={'/leads.png'} alt={'dashboard'} height={100} width={100} /> : 'Leads'}
                         </Link>
-                        <Link href="/opportunities" className="truncate">
+                        <Link href={`/opportunities/${teamId}`} className="truncate">
                             {isCollapsed ? <Image src={'/opportunities.png'} alt={'dashboard'} height={100} width={100} /> : 'Opportunities'}
                         </Link>
-                        <Link href="/tasks" className="truncate">
+                        <Link href={`/tasks/${teamId}`} className="truncate">
                             {isCollapsed ? <Image src={'/tasks.png'} alt={'dashboard'} height={100} width={100} /> : 'Tasks'}
                         </Link>
-                        <Link href="/reports" className="truncate">
+                        <Link href={`/reports/${teamId}`} className="truncate">
                             {isCollapsed ? <Image src={'/reports.png'} alt={'dashboard'} height={100} width={100} /> : 'Reports'}
                         </Link>
-                        <Link href="/emails" className="truncate">
+                        <Link href={`/emails/${teamId}`} className="truncate">
                             {isCollapsed ? <Image src={'/emails.png'} alt={'dashboard'} height={100} width={100} /> : 'Emails'}
                         </Link>
                         <Link href="/settings" className="truncate">

@@ -3,15 +3,17 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import apiClient from '@/utils/api_client';
+import { ContactsTable } from '@/components/tables/contacts_table';
+import { Contact } from '@prisma/client';
 
-interface Contact {
-    id: string;
-    firstName: string;
-    lastName: string;
-    email: string;
-    phone?: string;
-    company?: string;
-}
+// interface Contact {
+//     id: string;
+//     firstName: string;
+//     lastName: string;
+//     email: string;
+//     phone?: string;
+//     company?: string;
+// }
 
 const ContactsPage = ({ params }: { params: { teamId: string } }) => {
     const [contacts, setContacts] = useState<Contact[]>([])
@@ -88,28 +90,7 @@ const ContactsPage = ({ params }: { params: { teamId: string } }) => {
             </div>
 
             {filteredContacts.length > 0 ? (
-                <table className="w-full border-collapse border border-gray-300">
-                    <thead>
-                        <tr>
-                            <th className="border px-4 py-2">First Name</th>
-                            <th className="border px-4 py-2">Last Name</th>
-                            <th className="border px-4 py-2">Email</th>
-                            <th className="border px-4 py-2">Phone</th>
-                            <th className="border px-4 py-2">Company</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredContacts.map((contact) => (
-                            <tr key={contact.id}>
-                                <td className="border px-4 py-2">{contact.firstName}</td>
-                                <td className="border px-4 py-2">{contact.lastName}</td>
-                                <td className="border px-4 py-2">{contact.email}</td>
-                                <td className="border px-4 py-2">{contact.phone || '-'}</td>
-                                <td className="border px-4 py-2">{contact.company || '-'}</td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                <ContactsTable contacts={filteredContacts} />
             ) : (
                 <p>No contacts found.</p>
             )}

@@ -4,7 +4,10 @@ import { EmailDetail } from '@/components/email_components/email_detail';
 import { EmailList } from '@/components/email_components/emails_list';
 import { useState } from 'react';
 
-function EmailsPage() {
+
+const EmailsPage = ({ params }: { params: { teamId: string } }) => {
+    const { teamId } = params
+
     const [selectedEmailId, setSelectedEmailId] = useState<number | null>(null);
 
     return (

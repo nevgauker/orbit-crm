@@ -1,32 +1,28 @@
-import { dummyContacts } from '@/data/contacts';
+import { Contact } from '@prisma/client';
 
-export function ContactsTable() {
+export function ContactsTable({ contacts }: { contacts: Contact[] }) {
     return (
-        <div className="overflow-x-auto">
-            <table className="min-w-full bg-white border border-gray-300 rounded-md">
-                <thead className="bg-gray-100">
-                    <tr>
-                        <th className="text-left px-6 py-3 text-sm font-medium text-gray-700 border-b">Name</th>
-                        <th className="text-left px-6 py-3 text-sm font-medium text-gray-700 border-b">Email</th>
-                        <th className="text-left px-6 py-3 text-sm font-medium text-gray-700 border-b">Phone</th>
-                        <th className="text-left px-6 py-3 text-sm font-medium text-gray-700 border-b">Company</th>
-                        <th className="px-6 py-3 border-b"></th>
+        <table className="w-full border-collapse border border-gray-300">
+            <thead>
+                <tr>
+                    <th className="border px-4 py-2">First Name</th>
+                    <th className="border px-4 py-2">Last Name</th>
+                    <th className="border px-4 py-2">Email</th>
+                    <th className="border px-4 py-2">Phone</th>
+                    <th className="border px-4 py-2">Company</th>
+                </tr>
+            </thead>
+            <tbody>
+                {contacts.map((contact: Contact) => (
+                    <tr key={contact.id}>
+                        <td className="border px-4 py-2">{contact.firstName}</td>
+                        <td className="border px-4 py-2">{contact.lastName}</td>
+                        <td className="border px-4 py-2">{contact.email}</td>
+                        <td className="border px-4 py-2">{contact.phone || '-'}</td>
+                        <td className="border px-4 py-2">{contact.company || '-'}</td>
                     </tr>
-                </thead>
-                <tbody>
-                    {dummyContacts.map((contact) => (
-                        <tr key={contact.id} className="hover:bg-gray-50">
-                            <td className="px-6 py-4 text-sm text-gray-800">{contact.name}</td>
-                            <td className="px-6 py-4 text-sm text-gray-800">{contact.email}</td>
-                            <td className="px-6 py-4 text-sm text-gray-800">{contact.phone}</td>
-                            <td className="px-6 py-4 text-sm text-gray-800">{contact.company}</td>
-                            <td className="px-6 py-4 text-right">
-                                <button className="text-blue-600 hover:text-blue-800">View</button>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
+                ))}
+            </tbody>
+        </table>
     )
 }

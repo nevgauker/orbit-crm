@@ -10,7 +10,15 @@ export async function POST(req: Request) {
         const { email, password } = await req.json();
 
         // Find the user
-        const user = await db.user.findUnique({ where: { email } });
+        const user = await db.user.findUnique({
+            where: { email }, include: {
+                roles: {
+                    include: {
+                        team: true
+                    }
+                }
+            }
+        });
         if (!user) {
             return NextResponse.json({ error: "Invalid email or password" }, { status: 401 });
         }
@@ -26,7 +34,9 @@ export async function POST(req: Request) {
             expiresIn: "24h", // Token expiration
         })
 
-        return NextResponse.json({ message: "Sign-in successful", token }, { status: 200 });
+        const teamId = user.roles[0].team.id
+
+        return NextResponse.json({ message: "Sign-in successful", token, teamId }, { status: 200 });
     } catch (error) {
         console.error("Error in sign-in:", error);
         return NextResponse.json({ error: "Internal server error" }, { status: 500 });

@@ -37,38 +37,45 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
         const checkAuth = async () => {
-            const publicRoutes = ["/", "/signin", "/signup"];
-            if (publicRoutes.includes(pathname)) {
-                setInitializing(false);
-                return;
-            }
+            const publicRoutes = ["/", "/signin", "/signup"]
+            const isPublicRoute = publicRoutes.includes(pathname)
 
             try {
-                const token = localStorage.getItem("token");
-                if (!token) {
-                    console.warn("Token not found, redirecting to sign-in.");
+                const token = localStorage.getItem("token")
+
+                if (isPublicRoute && !token) {
+                    // On public routes, don't fetch or redirect if no token
                     setUser(null);
-                    router.push("/signin");
-                    return;
+                    setInitializing(false);
+                    return
                 }
 
-                // Set token in apiClient
-                apiClient.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+                if (token) {
+                    // Set token in apiClient
+                    apiClient.defaults.headers.common["Authorization"] = `Bearer ${token}`
 
-                // Fetch user data
-                const { data } = await apiClient.get<UserResult>("/protected/me");
-                setUser(data);
+                    // Fetch user data
+                    const { data } = await apiClient.get<UserResult>("/protected/me")
+                    setUser(data);
+                } else if (!isPublicRoute) {
+                    // Redirect to sign-in for non-public routes without a token
+                    router.push("/signin")
+                }
             } catch (error) {
                 console.error("Authentication check failed:", error);
-                setUser(null);
-                router.push("/signin");
-            } finally {
-                setInitializing(false);
-            }
-        };
 
-        checkAuth();
-    }, [router, pathname]);
+                if (!isPublicRoute) {
+                    setUser(null);
+                    router.push("/signin")
+                }
+            } finally {
+                setInitializing(false)
+            }
+        }
+
+        checkAuth()
+    }, [router, pathname])
+
 
     // Always return a valid layout
     if (initializing) {

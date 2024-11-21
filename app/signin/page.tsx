@@ -26,9 +26,9 @@ const SignInPage = () => {
         try {
             const response = await axios.post("/api/auth/signin", formData);
             if (response.status === 200) {
-                const { token } = response.data;
+                const { token, teamId } = response.data;
                 localStorage.setItem("token", token); // Store token
-                router.push("/dashboard"); // Redirect after successful login
+                router.push(`/dashboard/${teamId}`); // Redirect after successful login
             }
         } catch (err) {
             setLoading(false)

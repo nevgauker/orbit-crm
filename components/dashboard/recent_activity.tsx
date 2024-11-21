@@ -1,14 +1,24 @@
-import { recentContacts, recentLeads, upcomingTasks, recentEmails } from '@/data/dashboard';
+// import { recentContacts, recentLeads, upcomingTasks, recentEmails } from '@/data/dashboard';
+import { Contact, Email, Lead, Opportunity, Task } from "@prisma/client";
+import { format } from 'date-fns';
 
-export function RecentActivity() {
+interface RecentActivityProps {
+    contacts: Contact[]
+    leads: Lead[]
+    opportunities: Opportunity[]
+    tasks: Task[]
+    emails: Email[]
+}
+
+export function RecentActivity({ contacts, leads, opportunities, tasks, emails }: RecentActivityProps) {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-white shadow p-4 rounded-lg">
                 <h3 className="text-gray-600 text-sm font-medium mb-3">Recent Contacts</h3>
                 <ul>
-                    {recentContacts.map((contact) => (
+                    {contacts.map((contact) => (
                         <li key={contact.id} className="text-sm text-gray-700 mb-2">
-                            {contact.name} ({contact.company})
+                            {`${contact.firstName} ${contact.lastName}`} ({contact.company})
                         </li>
                     ))}
                 </ul>
@@ -16,9 +26,9 @@ export function RecentActivity() {
             <div className="bg-white shadow p-4 rounded-lg">
                 <h3 className="text-gray-600 text-sm font-medium mb-3">Recent Leads</h3>
                 <ul>
-                    {recentLeads.map((lead) => (
+                    {leads.map((lead) => (
                         <li key={lead.id} className="text-sm text-gray-700 mb-2">
-                            {lead.name} ({lead.status})
+                            {lead.firstName} {lead.lastName} ({lead.status})
                         </li>
                     ))}
                 </ul>
@@ -26,9 +36,10 @@ export function RecentActivity() {
             <div className="bg-white shadow p-4 rounded-lg">
                 <h3 className="text-gray-600 text-sm font-medium mb-3">Upcoming Tasks</h3>
                 <ul>
-                    {upcomingTasks.map((task) => (
+                    {tasks.map((task) => (
                         <li key={task.id} className="text-sm text-gray-700 mb-2">
-                            {task.title} (Due: {task.dueDate})
+                            {task.title} (Due: {task.dueDate ? format(new Date(task.dueDate), 'MMM d, yyyy') : ''})
+
                         </li>
                     ))}
                 </ul>
@@ -36,7 +47,7 @@ export function RecentActivity() {
             <div className="bg-white shadow p-4 rounded-lg">
                 <h3 className="text-gray-600 text-sm font-medium mb-3">Recent Emails</h3>
                 <ul>
-                    {recentEmails.map((email) => (
+                    {emails.map((email) => (
                         <li key={email.id} className="text-sm text-gray-700 mb-2">
                             {email.subject} (From: {email.sender})
                         </li>
