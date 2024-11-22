@@ -10,7 +10,7 @@ interface Team {
 }
 
 // Role type (includes nested team)
-interface UserRole {
+export interface UserRole {
     id: string;
     role: Role; // Enum for role values (OWNER, ADMIN, MEMBER, etc.)
     createdAt: Date;

@@ -110,21 +110,29 @@ enum OpportunityStatus {
 }
 
 model Task {
-  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  id          String       @id @default(auto()) @map("_id") @db.ObjectId
   title       String
   description String?
   dueDate     DateTime?
   status      TaskStatus
-  teamId      String     @db.ObjectId
-  team        Team       @relation(fields: [teamId], references: [id]) // Now belongs to a team
-  createdAt   DateTime   @default(now())
-  updatedAt   DateTime   @updatedAt
+  priority    TaskPriority
+  teamId      String       @db.ObjectId
+  team        Team         @relation(fields: [teamId], references: [id]) // Now belongs to a team
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 enum TaskStatus {
   PENDING
+  IN_PROGRESS
   COMPLETED
   OVERDUE
+}
+
+enum TaskPriority {
+  HIGH
+  MEDIUM
+  LOW
 }
 
 model Email {

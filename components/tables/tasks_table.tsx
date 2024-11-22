@@ -1,6 +1,16 @@
-import { dummyTasks } from '@/data/tasks';
+// import { dummyTasks } from '@/data/tasks';
+import { Task, TaskPriority, TaskStatus } from '@prisma/client';
+import { format } from 'date-fns';
 
-export function TasksTable() {
+
+
+// title: string;
+// description?: string;
+// dueDate: string;
+// status: TaskStatus;
+// ownerId: string;
+
+export function TasksTable({ tasks }: { tasks: Task[] }) {
     return (
         <div className="overflow-x-auto">
             <table className="min-w-full bg-white border border-gray-300 rounded-md">
@@ -15,15 +25,15 @@ export function TasksTable() {
                     </tr>
                 </thead>
                 <tbody>
-                    {dummyTasks.map((task) => (
+                    {tasks.map((task) => (
                         <tr key={task.id} className="hover:bg-gray-50">
-                            <td className="px-6 py-4 text-sm text-gray-800">{task.name}</td>
+                            <td className="px-6 py-4 text-sm text-gray-800">{task.title}</td>
                             <td className="px-6 py-4 text-sm text-gray-800">{task.description}</td>
-                            <td className="px-6 py-4 text-sm text-gray-800">{task.dueDate}</td>
+                            <td className="px-6 py-4 text-sm text-gray-800">{task.dueDate ? format(new Date(task.dueDate), 'MMM d, yyyy') : ''}</td>
                             <td className="px-6 py-4 text-sm text-gray-800">
                                 <span
-                                    className={`px-2 py-1 text-xs font-medium rounded ${task.priority === 'High' ? 'bg-red-100 text-red-800' :
-                                        task.priority === 'Medium' ? 'bg-yellow-100 text-yellow-800' :
+                                    className={`px-2 py-1 text-xs font-medium rounded ${task.priority === TaskPriority.HIGH ? 'bg-red-100 text-red-800' :
+                                        task.priority === TaskPriority.MEDIUM ? 'bg-yellow-100 text-yellow-800' :
                                             'bg-green-100 text-green-800'
                                         }`}
                                 >
@@ -32,8 +42,8 @@ export function TasksTable() {
                             </td>
                             <td className="px-6 py-4 text-sm text-gray-800">
                                 <span
-                                    className={`px-2 py-1 text-xs font-medium rounded ${task.status === 'Completed' ? 'bg-green-100 text-green-800' :
-                                        task.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
+                                    className={`px-2 py-1 text-xs font-medium rounded ${task.status === TaskStatus.COMPLETED ? 'bg-green-100 text-green-800' :
+                                        task.status === TaskStatus.IN_PROGRESS ? 'bg-blue-100 text-blue-800' :
                                             'bg-gray-100 text-gray-800'
                                         }`}
                                 >

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image'
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/auth_context';
+import { Role } from '@prisma/client';
 
 export default function Sidebar() {
     const [isCollapsed, setIsCollapsed] = useState(false)
@@ -18,7 +19,11 @@ export default function Sidebar() {
     }
 
     const teamId = user?.roles[currentTeam].id
-
+    function isAdmin() {
+        const role = user?.roles[currentTeam]
+        console.log(role?.role)
+        return role?.role === Role.OWNER
+    }
 
     return (
         <div className="flex h-screen">
@@ -47,23 +52,28 @@ export default function Sidebar() {
                             {isCollapsed ? <Image src={'/dashboard.png'} alt={'dashboard'} height={100} width={100} /> : 'Dashboard'}
                         </Link>
                         <Link href={`/contacts/${teamId}`} className="truncate">
-                            {isCollapsed ? <Image src={'/contacts.png'} alt={'dashboard'} height={100} width={100} /> : 'Contacts'}
+                            {isCollapsed ? <Image src={'/contacts.png'} alt={'contacts'} height={100} width={100} /> : 'Contacts'}
                         </Link>
                         <Link href={`/leads/${teamId}`} className="truncate">
-                            {isCollapsed ? <Image src={'/leads.png'} alt={'dashboard'} height={100} width={100} /> : 'Leads'}
+                            {isCollapsed ? <Image src={'/leads.png'} alt={'leads'} height={100} width={100} /> : 'Leads'}
                         </Link>
                         <Link href={`/opportunities/${teamId}`} className="truncate">
-                            {isCollapsed ? <Image src={'/opportunities.png'} alt={'dashboard'} height={100} width={100} /> : 'Opportunities'}
+                            {isCollapsed ? <Image src={'/opportunities.png'} alt={'opportunities'} height={100} width={100} /> : 'Opportunities'}
                         </Link>
                         <Link href={`/tasks/${teamId}`} className="truncate">
-                            {isCollapsed ? <Image src={'/tasks.png'} alt={'dashboard'} height={100} width={100} /> : 'Tasks'}
+                            {isCollapsed ? <Image src={'/tasks.png'} alt={'tasks'} height={100} width={100} /> : 'Tasks'}
                         </Link>
                         <Link href={`/reports/${teamId}`} className="truncate">
-                            {isCollapsed ? <Image src={'/reports.png'} alt={'dashboard'} height={100} width={100} /> : 'Reports'}
+                            {isCollapsed ? <Image src={'/reports.png'} alt={'reports'} height={100} width={100} /> : 'Reports'}
                         </Link>
                         <Link href={`/emails/${teamId}`} className="truncate">
-                            {isCollapsed ? <Image src={'/emails.png'} alt={'dashboard'} height={100} width={100} /> : 'Emails'}
+                            {isCollapsed ? <Image src={'/emails.png'} alt={'emails'} height={100} width={100} /> : 'Emails'}
                         </Link>
+
+                        {user && isAdmin() && <Link href={`/teams/${teamId}`} className="truncate">
+                            {isCollapsed ? <Image src={'/emails.png'} alt={'teams'} height={100} width={100} /> : 'Teams'}
+                        </Link>}
+
                         <Link href="/settings" className="truncate">
                             {isCollapsed ? <Image src={'/settings.png'} alt={'dashboard'} height={100} width={100} /> : 'Settings'}
                         </Link>

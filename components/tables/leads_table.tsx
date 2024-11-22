@@ -4,7 +4,7 @@ import { Lead } from "@prisma/client"
 export function LeadsTable({ leads }: { leads: Lead[] }) {
     return (
 
-        <table className="w-full border-collapse border border-gray-300">
+        <table className="w-full border-collapse border border-gray-300 bg-white">
             <thead>
                 <tr>
                     <th className="border px-4 py-2">Name</th>

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import apiClient from '@/utils/api_client';
 import { ContactsTable } from '@/components/tables/contacts_table';
 import { Contact } from '@prisma/client';
+import { SearchBar } from '@/components/serach_bar';
 
 // interface Contact {
 //     id: string;
@@ -65,7 +66,16 @@ const ContactsPage = ({ params }: { params: { teamId: string } }) => {
                 </Link>
             </div>
 
-            <div className="mb-4">
+
+            <SearchBar
+                search={search}
+                placeholder='Search by name, email, phone, or company...'
+                setSearch={setSearch}
+                handleSearch={handleSearch}
+                handleClear={handleClear}
+            />
+
+            {/* <div className="mb-4">
                 <input
                     type="text"
                     value={search}
@@ -87,7 +97,7 @@ const ContactsPage = ({ params }: { params: { teamId: string } }) => {
                         Clear
                     </button>
                 </div>
-            </div>
+            </div> */}
 
             {filteredContacts.length > 0 ? (
                 <ContactsTable contacts={filteredContacts} />

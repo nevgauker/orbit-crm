@@ -2,7 +2,7 @@ import { Contact } from '@prisma/client';
 
 export function ContactsTable({ contacts }: { contacts: Contact[] }) {
     return (
-        <table className="w-full border-collapse border border-gray-300">
+        <table className="w-full border-collapse border border-gray-300 bg-white">
             <thead>
                 <tr>
                     <th className="border px-4 py-2">First Name</th>
