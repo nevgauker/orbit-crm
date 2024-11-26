@@ -19,11 +19,7 @@ export default function Sidebar() {
     }
 
     const teamId = user?.roles[currentTeam].id
-    function isAdmin() {
-        const role = user?.roles[currentTeam]
-        console.log(role?.role)
-        return role?.role === Role.OWNER
-    }
+
 
     return (
         <div className="flex h-screen">
@@ -70,8 +66,8 @@ export default function Sidebar() {
                             {isCollapsed ? <Image src={'/emails.png'} alt={'emails'} height={100} width={100} /> : 'Emails'}
                         </Link>
 
-                        {user && isAdmin() && <Link href={`/teams/${teamId}`} className="truncate">
-                            {isCollapsed ? <Image src={'/emails.png'} alt={'teams'} height={100} width={100} /> : 'Teams'}
+                        {<Link href={`/teams`} className="truncate">
+                            {isCollapsed ? <Image src={'/teams.png'} alt={'teams'} height={100} width={100} /> : 'Teams'}
                         </Link>}
 
                         <Link href="/settings" className="truncate">
