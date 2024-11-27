@@ -1,24 +1,24 @@
-import { LeadStatus, OpportunityStatus } from '@prisma/client';
+import { OpportunityStatus } from '@prisma/client';
 import db from './db';
 
 //opportunity
 
-// export const createOpportunity = async (data: {
-//     title: string
-//     description?: string
-//     value: number
-//     status: OpportunityStatus
-//     leadId: string
-//     ownerId: string
-// }) => {
-//     return db.opportunity.create({
-//         data,
-//     })
-// }
+export const createOpportunity = async (data: {
+    title: string
+    description?: string
+    value: number
+    status: OpportunityStatus
+    teamId: string
+    leadId: string
+}) => {
+    return db.opportunity.create({
+        data,
+    })
+}
 
-export const getOpportunitiesByUser = async (ownerId: string) => {
+export const getOpportunitiesByTeam = async (teamId: string) => {
     return db.opportunity.findMany({
-        where: { id: ownerId },
+        where: { teamId },
     })
 }
 

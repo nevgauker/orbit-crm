@@ -1,8 +1,8 @@
 import { ChartsSection } from "@/components/reports/charts_section";
 import { KPISection } from "@/components/reports/kpi_section";
 
-const ReportsPage = ({ params }: { params: { teamId: string } }) => {
-    const { teamId } = params
+const ReportsPage = (/*{ params }: { params: { teamId: string } }*/) => {
+    // const { teamId } = params
 
     return (
         <div className="p-6 bg-gray-100 min-h-screen">

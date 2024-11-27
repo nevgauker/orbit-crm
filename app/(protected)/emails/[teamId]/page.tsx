@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 
 const EmailsPage = ({ params }: { params: { teamId: string } }) => {
-    const { teamId } = params
+    // const { teamId } = params
 
     const [selectedEmailId, setSelectedEmailId] = useState<number | null>(null);
 

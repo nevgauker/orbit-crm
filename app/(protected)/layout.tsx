@@ -1,7 +1,6 @@
 "use client";
 
 import Sidebar from '@/components/navigation/sidebar';
-import TeamSwitcher from '@/components/navigation/team_switcher';
 import TopBar from '@/components/navigation/top_bar';
 import { useAuth } from '@/contexts/auth_context';
 

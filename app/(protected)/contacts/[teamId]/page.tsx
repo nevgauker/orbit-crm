@@ -5,7 +5,7 @@ import Link from 'next/link';
 import apiClient from '@/utils/api_client';
 import { ContactsTable } from '@/components/tables/contacts_table';
 import { Contact } from '@prisma/client';
-import { SearchBar } from '@/components/serach_bar';
+import { SearchBar } from '@/components/search_bar';
 
 // interface Contact {
 //     id: string;
@@ -56,8 +56,14 @@ const ContactsPage = ({ params }: { params: { teamId: string } }) => {
 
     return (
         <div className="p-6">
-            <div className="flex justify-between items-center mb-4">
-                <h1 className="text-2xl font-bold">Contacts</h1>
+            <div className="flex justify-between items-start mb-4">
+                <div className="flex flex-col items-start">
+                    <h1 className="text-2xl font-bold">Contacts</h1>
+                    <p className="text-gray-600 mb-6">
+                        Manage your contacts list.
+                    </p>
+                </div>
+
                 <Link
                     href={`/contacts/create/${teamId}`}
                     className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"

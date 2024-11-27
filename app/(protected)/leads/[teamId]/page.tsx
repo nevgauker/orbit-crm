@@ -1,5 +1,5 @@
 'use client'
-import { SearchBar } from "@/components/serach_bar";
+import { SearchBar } from "@/components/search_bar";
 import { LeadsTable } from "@/components/tables/leads_table";
 import apiClient from "@/utils/api_client";
 import { Lead } from "@prisma/client";
@@ -46,10 +46,12 @@ const LeadsPage = ({ params }: { params: { teamId: string } }) => {
     return (
         <div className="p-6">
             <div className="flex justify-between items-center mb-4">
-                <h1 className="text-2xl font-bold">Leads</h1>
-                <p className="text-gray-600 mb-6">
-                    Track and manage your leads here. View, qualify, or mark leads as lost.
-                </p>
+                <div className="flex flex-col items-start">
+                    <h1 className="text-2xl font-bold">Leads</h1>
+                    <p className="text-gray-600 mb-6">
+                        Track and manage your leads here. View, qualify, or mark leads as lost.
+                    </p>
+                </div>
                 <Link
                     href={`/leads/create/${teamId}`}
                     className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"

@@ -2,14 +2,6 @@
 import { Task, TaskPriority, TaskStatus } from '@prisma/client';
 import { format } from 'date-fns';
 
-
-
-// title: string;
-// description?: string;
-// dueDate: string;
-// status: TaskStatus;
-// ownerId: string;
-
 export function TasksTable({ tasks }: { tasks: Task[] }) {
     return (
         <div className="overflow-x-auto">

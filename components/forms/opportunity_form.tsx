@@ -1,8 +1,9 @@
 'use client'
+import { Lead } from '@prisma/client';
 import { useState } from 'react'
 
 interface OpportunityCreateFormProps {
-    leads: { id: string; name: string }[]; // List of leads to associate with the opportunity
+    leads: Lead[] // List of leads to associate with the opportunity
     teamId: string; // ID of the team this opportunity belongs to
     onSubmit: (opportunityData: OpportunityFormValues) => void; // Callback to handle form submission
 }
@@ -127,7 +128,7 @@ export default function OpportunityCreateForm({
                     </option>
                     {leads.map((lead) => (
                         <option key={lead.id} value={lead.id}>
-                            {lead.name}
+                            {`${lead.firstName} ${lead.lastName}`}
                         </option>
                     ))}
                 </select>

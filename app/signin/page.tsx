@@ -4,7 +4,6 @@ import { useState } from "react"
 import axios from "axios"
 import { useRouter } from "next/navigation"
 import ActivityLoader from "@/components/activity_loader"
-import { deleteUsers } from "@/actions/delete_users"
 import Link from "next/link"
 
 
@@ -39,7 +38,6 @@ const SignInPage = () => {
 
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
-            {/* <button onClick={async () => deleteUsers()}>delete users</button> */}
             {
                 loading ? (
                     <ActivityLoader />

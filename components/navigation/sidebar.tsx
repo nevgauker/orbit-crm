@@ -5,7 +5,6 @@ import Link from 'next/link';
 import Image from 'next/image'
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/auth_context';
-import { Role } from '@prisma/client';
 
 export default function Sidebar() {
     const [isCollapsed, setIsCollapsed] = useState(false)

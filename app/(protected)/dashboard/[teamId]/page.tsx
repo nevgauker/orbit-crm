@@ -1,7 +1,6 @@
 import { fetchDashboardData } from "@/actions/dashboard_data";
 import { MetricsCard } from "@/components/dashboard/metrics_card";
 import { RecentActivity } from "@/components/dashboard/recent_activity";
-import TeamSwitcher from "@/components/navigation/team_switcher";
 
 const DashboardPage = async ({ params }: { params: { teamId: string } }) => {
     const { teamId } = params

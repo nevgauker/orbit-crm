@@ -1,6 +1,6 @@
 'use client'
 import { UserRole } from "@/types/userWithRoles";
-import { Role, Team, TeamRole } from "@prisma/client"
+import { Role, TeamRole } from "@prisma/client"
 import { useState } from "react";
 import InviteUserPopup from "../popups/invite_user_popup";
 import { useAuth } from "@/contexts/auth_context";
