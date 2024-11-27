@@ -1,30 +1,32 @@
-import { TaskStatus } from '@prisma/client';
+import { TaskPriority, TaskStatus } from '@prisma/client';
 import db from './db';
 
 export const createTask = async (data: {
     title: string;
     description?: string;
-    dueDate: string;
+    dueDate?: string;
     status: TaskStatus;
-    ownerId: string;
+    priority: TaskPriority
+    teamId: string;
 }) => {
     return db.task.create({
         data,
     })
 }
 
-export const getTasksByUser = async (ownerId: string) => {
+export const getTasksByTeam = async (teamId: string) => {
     return db.task.findMany({
-        where: { ownerId },
-    });
+        where: { teamId },
+    })
 }
 
 export const updateTask = async (id: string, data: Partial<{
     title: string;
     description?: string;
-    dueDate: string;
+    dueDate?: string;
     status: TaskStatus;
-    ownerId: string;
+    priority: TaskPriority
+    teamId: string;
 }>) => {
     return db.task.update({
         where: { id },

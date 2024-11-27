@@ -3,22 +3,22 @@ import db from './db';
 
 //opportunity
 
-export const createOpportunity = async (data: {
-    title: string
-    description?: string
-    value: number
-    status: OpportunityStatus
-    leadId: string
-    ownerId: string
-}) => {
-    return db.opportunity.create({
-        data,
-    })
-}
+// export const createOpportunity = async (data: {
+//     title: string
+//     description?: string
+//     value: number
+//     status: OpportunityStatus
+//     leadId: string
+//     ownerId: string
+// }) => {
+//     return db.opportunity.create({
+//         data,
+//     })
+// }
 
 export const getOpportunitiesByUser = async (ownerId: string) => {
     return db.opportunity.findMany({
-        where: { ownerId },
+        where: { id: ownerId },
     })
 }
 

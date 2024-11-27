@@ -65,8 +65,6 @@ const ContactsPage = ({ params }: { params: { teamId: string } }) => {
                     Create Contact
                 </Link>
             </div>
-
-
             <SearchBar
                 search={search}
                 placeholder='Search by name, email, phone, or company...'

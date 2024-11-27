@@ -9,15 +9,17 @@ export const metadata = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <AuthProvider>
-      <html lang="en">
-        <body>
+    <html lang="en">
+      <body>
+        <AuthProvider>
+
           {/* Main Content */}
           <main className="h-screen w-screen bg-gray-100 overflow-auto">
             {children}
           </main>
-        </body>
-      </html>
-    </AuthProvider>
+        </AuthProvider>
+
+      </body>
+    </html>
   );
 }

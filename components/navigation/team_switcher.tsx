@@ -24,9 +24,6 @@ export default function TeamSwitcher({ userRoles, currentTeamId, onSwitchTeam }:
 
     return (
         <div className="relative inline-block">
-            <label htmlFor="team-switcher" className="block text-sm font-medium text-gray-700 mb-2">
-                Switch Team
-            </label>
             <select
                 id="team-switcher"
                 value={selectedTeam}

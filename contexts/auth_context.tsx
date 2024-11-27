@@ -37,8 +37,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
         const checkAuth = async () => {
-
-            console.log('zzzz')
             const publicRoutes = ["/", "/invite", "/signin", "/signup", "/pricing"]
             const isPublicRoute = publicRoutes.includes(pathname)
 
@@ -57,8 +55,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                     apiClient.defaults.headers.common["Authorization"] = `Bearer ${token}`
 
                     // Fetch user data
-                    console.log('DDDDDDD')
-
                     const { data } = await apiClient.get<UserResult>("/protected/me")
                     setUser(data);
                 } else if (!isPublicRoute) {
