@@ -14,10 +14,11 @@ export default function Sidebar() {
         // Clear the token and reset the user
         localStorage.removeItem("token")
         setUser(null)
+        setCurrentTeam(0)
         router.push("/signin")
     }
 
-    const teamId = user?.roles[currentTeam].id
+    const teamId = user?.roles[currentTeam].team.id
 
 
     return (
