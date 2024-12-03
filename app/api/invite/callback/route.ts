@@ -15,26 +15,34 @@ export async function GET(req: NextRequest) {
 
     try {
         // Ensure the user now exists
-        const user = await getUserByEmail(email)
+        const user = await getUserByEmail(email);
 
         if (!user) {
             return NextResponse.json({ message: "User not found after sign-up." }, { status: 400 });
         }
 
         // Add the user to the team
-        await createTeamRole(
-            {
-                userId: user.id,
-                teamId,
-                role: role as Role,
-            }
-        )
+        await createTeamRole({
+            userId: user.id,
+            teamId,
+            role: role as Role, // Ensure the role value is a valid `Role` enum
+        });
 
         return NextResponse.redirect(`/dashboard?teamId=${teamId}`);
-    } catch (error: any) {
-        console.error("Error handling invite callback:", error);
+    } catch (error) {
+        // Use a more specific type for error handling
+        if (error instanceof Error) {
+            console.error("Error handling invite callback:", error);
+            return NextResponse.json(
+                { message: "Internal Server Error", error: error.message },
+                { status: 500 }
+            );
+        }
+
+        // Fallback for unexpected errors
+        console.error("Unexpected error type:", error);
         return NextResponse.json(
-            { message: "Internal Server Error", error: error.message },
+            { message: "Internal Server Error", error: "An unexpected error occurred." },
             { status: 500 }
         );
     }

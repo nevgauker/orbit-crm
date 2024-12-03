@@ -1,4 +1,5 @@
 'use client'
+import { SearchBar } from "@/components/search_bar";
 import { TasksTable } from "@/components/tables/tasks_table";
 import apiClient from "@/utils/api_client";
 import { Task } from "@prisma/client";
@@ -26,7 +27,7 @@ const TasksPage = ({ params }: { params: { teamId: string } }) => {
         };
 
         fetchTasks();
-    }, []);
+    }, [teamId]);
 
     const handleSearch = () => {
         const filtered = tasks.filter(
@@ -58,14 +59,14 @@ const TasksPage = ({ params }: { params: { teamId: string } }) => {
                 >
                     Create Task
                 </Link>
-
-
-
             </div>
-
-
-
-
+            <SearchBar
+                search={search}
+                placeholder='Search by first name, last name, email, or phone...'
+                setSearch={setSearch}
+                handleSearch={handleSearch}
+                handleClear={handleClear}
+            />
             <div className="bg-white p-4 shadow rounded-md">
                 {filteredTasks.length > 0 ? (
                     <TasksTable tasks={filteredTasks} />

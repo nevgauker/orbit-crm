@@ -25,7 +25,7 @@ const LeadsPage = ({ params }: { params: { teamId: string } }) => {
         };
 
         fetchLeads();
-    }, []);
+    }, [teamId]);
     const handleSearch = () => {
         const filtered = leads.filter(
             (lead) =>

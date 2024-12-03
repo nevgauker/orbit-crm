@@ -1,6 +1,5 @@
 import { createTeamRole } from "@/db/team_role";
 import { getUserByEmail } from "@/db/user";
-import { Role } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
@@ -13,15 +12,15 @@ export async function POST(req: NextRequest) {
         }
 
         // Check if the user exists
-        const user = await getUserByEmail(email)
+        const user = await getUserByEmail(email);
+
         if (user) {
             // User exists: Create TeamRole and redirect to dashboard
             await createTeamRole({
                 userId: user.id,
                 teamId,
                 role,
-            })
-
+            });
 
             return NextResponse.json({
                 message: "User added to the team.",
@@ -38,10 +37,18 @@ export async function POST(req: NextRequest) {
                 redirectUrl: `/signup?callbackUrl=${encodeURIComponent(callbackUrl)}`,
             });
         }
-    } catch (error: any) {
-        console.error("Error handling invite:", error);
+    } catch (error) {
+        if (error instanceof Error) {
+            console.error("Error handling invite:", error);
+            return NextResponse.json(
+                { message: "Internal Server Error", error: error.message },
+                { status: 500 }
+            );
+        }
+
+        console.error("Unexpected error type:", error);
         return NextResponse.json(
-            { message: "Internal Server Error", error: error.message },
+            { message: "Internal Server Error", error: "An unexpected error occurred." },
             { status: 500 }
         );
     }

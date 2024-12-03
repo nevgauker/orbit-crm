@@ -1,4 +1,5 @@
 'use client'
+import { SearchBar } from "@/components/search_bar";
 import { OpportunitiesTable } from "@/components/tables/opportunities_table";
 import apiClient from "@/utils/api_client";
 import { Opportunity } from "@prisma/client";
@@ -24,7 +25,21 @@ const OpportunitiesPage = ({ params }: { params: { teamId: string } }) => {
         };
 
         fetchOpportunities();
-    }, []);
+    }, [teamId])
+
+    const handleSearch = () => {
+        const filtered = opportunities.filter(
+            (opportunity) =>
+                opportunity.title.toLowerCase().includes(search.toLowerCase()) ||
+                (opportunity.description && opportunity.description.toLowerCase().includes(search.toLowerCase()))
+        )
+        setFilteredOpportunities(filtered);
+    }
+
+    const handleClear = () => {
+        setSearch('');
+        setFilteredOpportunities(opportunities); // Reset to all data
+    }
 
     return (
         <div className="p-6">
@@ -41,7 +56,15 @@ const OpportunitiesPage = ({ params }: { params: { teamId: string } }) => {
                     className="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 transition"
                 >
                     Create Opportunity
-                </Link>            </div>
+                </Link>
+            </div>
+            <SearchBar
+                search={search}
+                placeholder='Search by title, or description...'
+                setSearch={setSearch}
+                handleSearch={handleSearch}
+                handleClear={handleClear}
+            />
 
             {opportunities.length > 0 ? <OpportunitiesTable opportunities={filteredOpportunities} />
                 : <p>No opportunities found.</p>}

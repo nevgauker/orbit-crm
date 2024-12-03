@@ -28,7 +28,7 @@ const CreateOpportunityPage = ({ params }: { params: { teamId: string } }) => {
         };
 
         fetchLeads();
-    }, []);
+    }, [teamId]);
 
     const handleContactSubmit = async (data: OpportunityFormValues) => {
 

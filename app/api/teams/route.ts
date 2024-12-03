@@ -1,5 +1,16 @@
-import { getTeamById } from "@/db/team";
+import { createTeam, getTeamById } from "@/db/team";
 import { NextResponse } from "next/server";
+
+export async function POST(req: Request) {
+    try {
+        const data = await req.json();
+        const newTeam = await createTeam(data)
+        return NextResponse.json(newTeam, { status: 201 });
+    } catch (error) {
+        console.log(error)
+        return NextResponse.json({ error: 'Failed to create lead' }, { status: 500 });
+    }
+}
 
 export async function GET(request: Request) {
     try {

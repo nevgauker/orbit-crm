@@ -35,7 +35,7 @@ const ContactsPage = ({ params }: { params: { teamId: string } }) => {
         };
 
         fetchContacts();
-    }, []);
+    }, [teamId]);
 
     const handleSearch = () => {
         const filtered = contacts.filter(

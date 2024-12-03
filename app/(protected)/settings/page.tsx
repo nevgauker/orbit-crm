@@ -64,7 +64,7 @@ function SettingsPage() {
                 <h2 className="text-xl font-semibold text-gray-800 mb-4">Teams</h2>
                 <div className="space-y-4">
                     <ul>
-                        {user?.roles.map((role) => <div className="flex space-x-2">
+                        {user?.roles.map((role) => <div key={role.id} className="flex space-x-2">
                             <div>{role.role}</div>
                             <div>{role.team.name}</div>
                         </div>)}

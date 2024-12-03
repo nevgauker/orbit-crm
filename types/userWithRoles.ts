@@ -1,4 +1,4 @@
-import { Role } from "@prisma/client";
+import { Role, UserType } from "@prisma/client";
 
 // Team type
 interface Team {
@@ -27,6 +27,7 @@ interface UserWithRoles {
     password: string;
     createdAt: Date;
     updatedAt: Date;
+    userType: UserType
     roles: UserRole[]; // Array of roles with nested team
 }
 

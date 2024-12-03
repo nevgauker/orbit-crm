@@ -3,7 +3,6 @@ import Video from "@/components/video";
 import { useAuth } from "@/contexts/auth_context";
 // import { getAllUsers } from "@/db/user";
 // import Image from "next/image";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 
 function HomePage() {

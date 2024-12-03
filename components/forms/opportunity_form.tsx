@@ -104,7 +104,7 @@ export default function OpportunityCreateForm({
                 <select
                     id="status"
                     value={status}
-                    onChange={(e) => setStatus(e.target.value as any)}
+                    onChange={(e) => setStatus(e.target.value as 'OPEN' | 'IN_PROGRESS' | 'WON' | 'LOST')}
                     className="w-full px-4 py-2 border rounded-md"
                 >
                     <option value="OPEN">Open</option>

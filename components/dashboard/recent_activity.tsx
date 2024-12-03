@@ -10,7 +10,7 @@ interface RecentActivityProps {
     emails: Email[]
 }
 
-export function RecentActivity({ contacts, leads, opportunities, tasks, emails }: RecentActivityProps) {
+export function RecentActivity({ contacts, leads, tasks, emails }: RecentActivityProps) {
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="bg-white shadow p-4 rounded-lg">

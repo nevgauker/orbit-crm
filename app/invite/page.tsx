@@ -1,7 +1,6 @@
 'use client'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from "react";
-import apiClient from "@/utils/api_client";
 import axios from 'axios';
 
 const InvitePage = () => {
@@ -48,7 +47,7 @@ const InvitePage = () => {
         // if (router.isReady) {
         processInvite();
         // }
-    }, [router]);
+    }, [router, token]);
 
     if (loading) return <div>Processing your invitation...</div>;
     if (error) return <div>Error: {error}</div>;

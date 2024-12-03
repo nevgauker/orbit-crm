@@ -1,4 +1,3 @@
-import db from "@/db/db";
 import { getUserById } from "@/db/user";
 import { verifyToken } from "@/utils/auth";
 import { NextResponse } from "next/server";

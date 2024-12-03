@@ -98,7 +98,7 @@ export default function TaskCreateForm({ teamId, onSubmit }: TaskCreateFormProps
                 <select
                     id="status"
                     value={status}
-                    onChange={(e) => setStatus(e.target.value as any)}
+                    onChange={(e) => setStatus(e.target.value as 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'OVERDUE')}
                     className="w-full px-4 py-2 border rounded-md"
                 >
                     <option value="PENDING">Pending</option>
@@ -114,7 +114,7 @@ export default function TaskCreateForm({ teamId, onSubmit }: TaskCreateFormProps
                 <select
                     id="priority"
                     value={priority}
-                    onChange={(e) => setPriority(e.target.value as any)}
+                    onChange={(e) => setPriority(e.target.value as 'HIGH' | 'MEDIUM' | 'LOW')}
                     className="w-full px-4 py-2 border rounded-md"
                 >
                     <option value="HIGH">High</option>
