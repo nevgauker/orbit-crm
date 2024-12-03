@@ -1,4 +1,5 @@
 'use client'
+import ActivityLoader from "@/components/activity_loader";
 import { SearchBar } from "@/components/search_bar";
 import { LeadsTable } from "@/components/tables/leads_table";
 import apiClient from "@/utils/api_client";
@@ -11,6 +12,8 @@ const LeadsPage = ({ params }: { params: { teamId: string } }) => {
     const [leads, setLeads] = useState<Lead[]>([])
     const [filteredLeads, setFilteredLeads] = useState<Lead[]>([])
     const [search, setSearch] = useState('')
+    const [loading, setLoading] = useState(true)
+
 
     useEffect(() => {
         // Fetch all contacts when the component loads
@@ -21,6 +24,8 @@ const LeadsPage = ({ params }: { params: { teamId: string } }) => {
                 setFilteredLeads(response.data); // Initialize filtered contacts with all data
             } catch (error) {
                 console.error('Error fetching contacts:', error)
+            } finally {
+                setLoading(false)
             }
         };
 
@@ -66,10 +71,9 @@ const LeadsPage = ({ params }: { params: { teamId: string } }) => {
                 handleSearch={handleSearch}
                 handleClear={handleClear}
             />
-
-
-            {leads.length > 0 ? <LeadsTable leads={filteredLeads} /> : <p>No leads found.</p>}
-
+            {loading ? <ActivityLoader /> : (
+                leads.length > 0 ? <LeadsTable leads={filteredLeads} /> : <p>No leads found.</p>
+            )}
         </div>
     )
 }

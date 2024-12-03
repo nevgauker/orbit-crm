@@ -1,4 +1,5 @@
 'use client'
+import ActivityLoader from "@/components/activity_loader";
 import { SearchBar } from "@/components/search_bar";
 import { TasksTable } from "@/components/tables/tasks_table";
 import apiClient from "@/utils/api_client";
@@ -13,6 +14,8 @@ const TasksPage = ({ params }: { params: { teamId: string } }) => {
     const [tasks, setTasks] = useState<Task[]>([])
     const [filteredTasks, setFilteredTasks] = useState<Task[]>([])
     const [search, setSearch] = useState('')
+    const [loading, setLoading] = useState(true)
+
 
     useEffect(() => {
         // Fetch all contacts when the component loads
@@ -23,6 +26,8 @@ const TasksPage = ({ params }: { params: { teamId: string } }) => {
                 setFilteredTasks(response.data); // Initialize filtered contacts with all data
             } catch (error) {
                 console.error('Error fetching contacts:', error)
+            } finally {
+                setLoading(false)
             }
         };
 
@@ -68,11 +73,15 @@ const TasksPage = ({ params }: { params: { teamId: string } }) => {
                 handleClear={handleClear}
             />
             <div className="bg-white p-4 shadow rounded-md">
-                {filteredTasks.length > 0 ? (
-                    <TasksTable tasks={filteredTasks} />
-                ) : (
-                    <p>No tasks found.</p>
-                )}
+                {
+                    loading ? <ActivityLoader /> : (
+                        filteredTasks.length > 0 ? (
+                            <TasksTable tasks={filteredTasks} />
+                        ) : (
+                            <p>No tasks found.</p>
+                        )
+                    )
+                }
             </div>
         </div>
     );

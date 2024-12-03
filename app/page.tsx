@@ -1,10 +1,7 @@
 'use client'
-import Video from "@/components/video";
 import { useAuth } from "@/contexts/auth_context";
-// import { getAllUsers } from "@/db/user";
-// import Image from "next/image";
 import { useRouter } from "next/navigation";
-
+import Image from 'next/image'
 function HomePage() {
 
   const { user } = useAuth();
@@ -27,7 +24,9 @@ function HomePage() {
       <h1 className="text-5xl font-bold text-gray-800 mb-4">OrbitCRM</h1>
       <p className="text-xl text-gray-600 mb-8">The ultimate platform for building and nurturing customer relationships.</p>
 
-      <Video filePath={"orbit-video.mp4"} type={"video/mp4"} height={"400"} width={"400"} />
+
+      <Image width={400} height={400} src={"/logo.png"} alt={"Orbit CRM Logo"} />
+      {/* <Video filePath={"orbit-video.mp4"} type={"video/mp4"} height={"400"} width={"400"} /> */}
 
 
       <button className="bg-blue-600 text-white px-6 py-3 rounded-full text-lg font-semibold hover:bg-blue-700" onClick={handleGetStarted}>

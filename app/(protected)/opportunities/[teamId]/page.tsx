@@ -1,4 +1,5 @@
 'use client'
+import ActivityLoader from "@/components/activity_loader";
 import { SearchBar } from "@/components/search_bar";
 import { OpportunitiesTable } from "@/components/tables/opportunities_table";
 import apiClient from "@/utils/api_client";
@@ -11,6 +12,7 @@ const OpportunitiesPage = ({ params }: { params: { teamId: string } }) => {
     const [opportunities, setOpportunities] = useState<Opportunity[]>([])
     const [filteredOpportunities, setFilteredOpportunities] = useState<Opportunity[]>([])
     const [search, setSearch] = useState('')
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         // Fetch all contacts when the component loads
@@ -21,6 +23,8 @@ const OpportunitiesPage = ({ params }: { params: { teamId: string } }) => {
                 setFilteredOpportunities(response.data); // Initialize filtered contacts with all data
             } catch (error) {
                 console.error('Error fetching opportunities:', error)
+            } finally {
+                setLoading(false)
             }
         };
 
@@ -65,10 +69,13 @@ const OpportunitiesPage = ({ params }: { params: { teamId: string } }) => {
                 handleSearch={handleSearch}
                 handleClear={handleClear}
             />
+            {
+                loading ? <ActivityLoader /> : (
+                    opportunities.length > 0 ? <OpportunitiesTable opportunities={filteredOpportunities} />
+                        : <p>No opportunities found.</p>
 
-            {opportunities.length > 0 ? <OpportunitiesTable opportunities={filteredOpportunities} />
-                : <p>No opportunities found.</p>}
-
+                )
+            }
         </div>
     );
 }

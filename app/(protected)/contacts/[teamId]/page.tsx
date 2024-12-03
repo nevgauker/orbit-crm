@@ -6,6 +6,7 @@ import apiClient from '@/utils/api_client';
 import { ContactsTable } from '@/components/tables/contacts_table';
 import { Contact } from '@prisma/client';
 import { SearchBar } from '@/components/search_bar';
+import ActivityLoader from '@/components/activity_loader';
 
 // interface Contact {
 //     id: string;
@@ -21,6 +22,7 @@ const ContactsPage = ({ params }: { params: { teamId: string } }) => {
     const [filteredContacts, setFilteredContacts] = useState<Contact[]>([])
     const [search, setSearch] = useState('')
     const { teamId } = params
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
         // Fetch all contacts when the component loads
@@ -31,6 +33,8 @@ const ContactsPage = ({ params }: { params: { teamId: string } }) => {
                 setFilteredContacts(response.data); // Initialize filtered contacts with all data
             } catch (error) {
                 console.error('Error fetching contacts:', error)
+            } finally {
+                setLoading(false)
             }
         };
 
@@ -78,36 +82,15 @@ const ContactsPage = ({ params }: { params: { teamId: string } }) => {
                 handleSearch={handleSearch}
                 handleClear={handleClear}
             />
-
-            {/* <div className="mb-4">
-                <input
-                    type="text"
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                    placeholder="Search by name, email, phone, or company..."
-                    className="border px-4 py-2 w-full mb-2"
-                />
-                <div className="flex gap-2">
-                    <button
-                        onClick={handleSearch}
-                        className="bg-blue-600 text-white px-4 py-2 rounded"
-                    >
-                        Search
-                    </button>
-                    <button
-                        onClick={handleClear}
-                        className="bg-gray-400 text-white px-4 py-2 rounded"
-                    >
-                        Clear
-                    </button>
-                </div>
-            </div> */}
-
-            {filteredContacts.length > 0 ? (
-                <ContactsTable contacts={filteredContacts} />
-            ) : (
-                <p>No contacts found.</p>
-            )}
+            {
+                loading ? <ActivityLoader /> : (
+                    filteredContacts.length > 0 ? (
+                        <ContactsTable contacts={filteredContacts} />
+                    ) : (
+                        <p>No contacts found.</p>
+                    )
+                )
+            }
         </div>
     )
 }
