@@ -2,6 +2,8 @@ import { createOpportunity, getOpportunitiesByTeam } from "@/db/opportunity";
 import { NextResponse } from "next/server";
 import { assertTeamMembership, getAuthUserId } from "@/utils/authorization";
 import { z } from "zod";
+import db from "@/db/db";
+import { updateOpportunity, deleteOpportunity } from "@/db/opportunity";
 
 const opportunitySchema = z.object({
     title: z.string().min(1),
@@ -27,6 +29,54 @@ export async function POST(req: Request) {
         }
         console.log(error)
         return NextResponse.json({ error: 'Failed to create opportunity' }, { status: 500 });
+    }
+}
+
+const opportunityUpdateSchema = z.object({
+    id: z.string().min(1),
+    title: z.string().min(1).optional(),
+    description: z.string().optional(),
+    value: z.number().int().nonnegative().optional(),
+    status: z.enum(['OPEN', 'IN_PROGRESS', 'WON', 'LOST']).optional(),
+    leadId: z.string().min(1).optional(),
+})
+
+export async function PATCH(req: Request) {
+    try {
+        const userId = await getAuthUserId(req)
+        const json = await req.json()
+        const data = opportunityUpdateSchema.parse(json)
+        const existing = await db.opportunity.findUnique({ where: { id: data.id } })
+        if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+        await assertTeamMembership(userId, existing.teamId)
+        const { id, ...fields } = data
+        const updated = await updateOpportunity(id, fields)
+        return NextResponse.json(updated)
+    } catch (error) {
+        if (error instanceof Response) return error
+        if (error instanceof z.ZodError) return NextResponse.json({ error: 'Invalid payload', details: error.errors }, { status: 400 })
+        console.log(error)
+        return NextResponse.json({ error: 'Failed to update opportunity' }, { status: 500 })
+    }
+}
+
+const opportunityDeleteSchema = z.object({ id: z.string().min(1) })
+
+export async function DELETE(req: Request) {
+    try {
+        const userId = await getAuthUserId(req)
+        const json = await req.json()
+        const { id } = opportunityDeleteSchema.parse(json)
+        const existing = await db.opportunity.findUnique({ where: { id } })
+        if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+        await assertTeamMembership(userId, existing.teamId)
+        await deleteOpportunity(id)
+        return NextResponse.json({ success: true })
+    } catch (error) {
+        if (error instanceof Response) return error
+        if (error instanceof z.ZodError) return NextResponse.json({ error: 'Invalid payload', details: error.errors }, { status: 400 })
+        console.log(error)
+        return NextResponse.json({ error: 'Failed to delete opportunity' }, { status: 500 })
     }
 }
 

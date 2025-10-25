@@ -2,6 +2,8 @@ import { createTask, getTasksByTeam } from "@/db/task";
 import { NextResponse } from "next/server";
 import { assertTeamMembership, getAuthUserId } from "@/utils/authorization";
 import { z } from "zod";
+import db from "@/db/db";
+import { updateTask, deleteTask } from "@/db/task";
 
 const taskSchema = z.object({
     title: z.string().min(1),
@@ -27,6 +29,54 @@ export async function POST(req: Request) {
         }
         console.log(error)
         return NextResponse.json({ error: 'Failed to create task' }, { status: 500 });
+    }
+}
+
+const taskUpdateSchema = z.object({
+    id: z.string().min(1),
+    title: z.string().min(1).optional(),
+    description: z.string().optional(),
+    dueDate: z.string().optional(),
+    status: z.enum(['PENDING', 'IN_PROGRESS', 'COMPLETED', 'OVERDUE']).optional(),
+    priority: z.enum(['HIGH', 'MEDIUM', 'LOW']).optional(),
+})
+
+export async function PATCH(req: Request) {
+    try {
+        const userId = await getAuthUserId(req)
+        const json = await req.json()
+        const data = taskUpdateSchema.parse(json)
+        const existing = await db.task.findUnique({ where: { id: data.id } })
+        if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+        await assertTeamMembership(userId, existing.teamId)
+        const { id, ...fields } = data
+        const updated = await updateTask(id, fields)
+        return NextResponse.json(updated)
+    } catch (error) {
+        if (error instanceof Response) return error
+        if (error instanceof z.ZodError) return NextResponse.json({ error: 'Invalid payload', details: error.errors }, { status: 400 })
+        console.log(error)
+        return NextResponse.json({ error: 'Failed to update task' }, { status: 500 })
+    }
+}
+
+const taskDeleteSchema = z.object({ id: z.string().min(1) })
+
+export async function DELETE(req: Request) {
+    try {
+        const userId = await getAuthUserId(req)
+        const json = await req.json()
+        const { id } = taskDeleteSchema.parse(json)
+        const existing = await db.task.findUnique({ where: { id } })
+        if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
+        await assertTeamMembership(userId, existing.teamId)
+        await deleteTask(id)
+        return NextResponse.json({ success: true })
+    } catch (error) {
+        if (error instanceof Response) return error
+        if (error instanceof z.ZodError) return NextResponse.json({ error: 'Invalid payload', details: error.errors }, { status: 400 })
+        console.log(error)
+        return NextResponse.json({ error: 'Failed to delete task' }, { status: 500 })
     }
 }
 
