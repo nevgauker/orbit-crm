@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/auth_context";
 import Modal from "@/components/popups/modal";
 import TaskCreateForm, { TaskFormValues } from "@/components/forms/task_form";
+import { toast } from "sonner";
 
 
 const TasksPage = ({ params }: { params: { teamId: string } }) => {
@@ -65,9 +66,15 @@ const TasksPage = ({ params }: { params: { teamId: string } }) => {
                     const canDelete = role === Role.ADMIN || role === Role.OWNER
                     const handleDelete = async (id: string) => {
                         if (!confirm('Delete this task?')) return
-                        await apiClient.delete('/tasks', { data: { id } })
-                        setTasks(prev => prev.filter(t => t.id !== id))
-                        setFilteredTasks(prev => prev.filter(t => t.id !== id))
+                        try {
+                            await apiClient.delete('/tasks', { data: { id } })
+                            setTasks(prev => prev.filter(t => t.id !== id))
+                            setFilteredTasks(prev => prev.filter(t => t.id !== id))
+                            toast.success('Task deleted')
+                        } catch (e) {
+                            console.error(e)
+                            toast.error('Failed to delete task')
+                        }
                     }
                     const handleEdit = (task: Task) => {
                         setEditing(task)
@@ -98,11 +105,17 @@ const TasksPage = ({ params }: { params: { teamId: string } }) => {
                         }}
                         submitLabel="Update Task"
                         onSubmit={async (vals: TaskFormValues) => {
-                            const { data } = await apiClient.patch<Task>('/tasks', { id: editing.id, ...vals })
-                            setTasks(prev => prev.map(t => t.id === editing.id ? data : t))
-                            setFilteredTasks(prev => prev.map(t => t.id === editing.id ? data : t))
-                            setIsEditOpen(false)
-                            setEditing(null)
+                            try {
+                                const { data } = await apiClient.patch<Task>('/tasks', { id: editing.id, ...vals })
+                                setTasks(prev => prev.map(t => t.id === editing.id ? data : t))
+                                setFilteredTasks(prev => prev.map(t => t.id === editing.id ? data : t))
+                                toast.success('Task updated')
+                                setIsEditOpen(false)
+                                setEditing(null)
+                            } catch (e) {
+                                console.error(e)
+                                toast.error('Failed to update task')
+                            }
                         }}
                     />
                 )}

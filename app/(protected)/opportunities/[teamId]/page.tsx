@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/auth_context";
 import Modal from "@/components/popups/modal";
 import OpportunityCreateForm, { OpportunityFormValues } from "@/components/forms/opportunity_form";
+import { toast } from "sonner";
 
 const OpportunitiesPage = ({ params }: { params: { teamId: string } }) => {
     const { teamId } = params
@@ -64,9 +65,15 @@ const OpportunitiesPage = ({ params }: { params: { teamId: string } }) => {
                 const canDelete = role === Role.ADMIN || role === Role.OWNER
                 const handleDelete = async (id: string) => {
                     if (!confirm('Delete this opportunity?')) return
-                    await apiClient.delete('/opportunities', { data: { id } })
-                    setOpportunities(prev => prev.filter(o => o.id !== id))
-                    setFilteredOpportunities(prev => prev.filter(o => o.id !== id))
+                    try {
+                        await apiClient.delete('/opportunities', { data: { id } })
+                        setOpportunities(prev => prev.filter(o => o.id !== id))
+                        setFilteredOpportunities(prev => prev.filter(o => o.id !== id))
+                        toast.success('Opportunity deleted')
+                    } catch (e) {
+                        console.error(e)
+                        toast.error('Failed to delete opportunity')
+                    }
                 }
                 const handleEdit = (op: Opportunity) => {
                     setEditing(op)
@@ -97,11 +104,17 @@ const OpportunitiesPage = ({ params }: { params: { teamId: string } }) => {
                         }}
                         submitLabel="Update Opportunity"
                         onSubmit={async (vals: OpportunityFormValues) => {
-                            const { data } = await apiClient.patch<Opportunity>('/opportunities', { id: editing.id, ...vals })
-                            setOpportunities(prev => prev.map(o => o.id === editing.id ? data : o))
-                            setFilteredOpportunities(prev => prev.map(o => o.id === editing.id ? data : o))
-                            setIsEditOpen(false)
-                            setEditing(null)
+                            try {
+                                const { data } = await apiClient.patch<Opportunity>('/opportunities', { id: editing.id, ...vals })
+                                setOpportunities(prev => prev.map(o => o.id === editing.id ? data : o))
+                                setFilteredOpportunities(prev => prev.map(o => o.id === editing.id ? data : o))
+                                toast.success('Opportunity updated')
+                                setIsEditOpen(false)
+                                setEditing(null)
+                            } catch (e) {
+                                console.error(e)
+                                toast.error('Failed to update opportunity')
+                            }
                         }}
                     />
                 )}

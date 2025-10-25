@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import './globals.css';
 import { AuthProvider } from '@/contexts/auth_context';
 import { Inter } from 'next/font/google';
+import AppToaster from '@/components/providers/toaster';
 
 export const metadata = {
   title: 'OrbitCRM',
@@ -20,6 +21,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           <main className="h-screen w-screen bg-background overflow-auto">
             {children}
           </main>
+          <AppToaster />
         </AuthProvider>
 
       </body>

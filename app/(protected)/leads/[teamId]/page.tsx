@@ -8,6 +8,7 @@ import Modal from "@/components/popups/modal";
 import { LeadForm } from "@/components/forms/lead_form";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { toast } from "sonner";
 
 const LeadsPage = ({ params }: { params: { teamId: string } }) => {
     const { teamId } = params
@@ -74,9 +75,15 @@ const LeadsPage = ({ params }: { params: { teamId: string } }) => {
                 const canDelete = role === Role.ADMIN || role === Role.OWNER
                 const handleDelete = async (id: string) => {
                     if (!confirm('Delete this lead?')) return
-                    await apiClient.delete('/leads', { data: { id } })
-                    setLeads(prev => prev.filter(l => l.id !== id))
-                    setFilteredLeads(prev => prev.filter(l => l.id !== id))
+                    try {
+                        await apiClient.delete('/leads', { data: { id } })
+                        setLeads(prev => prev.filter(l => l.id !== id))
+                        setFilteredLeads(prev => prev.filter(l => l.id !== id))
+                        toast.success('Lead deleted')
+                    } catch (e) {
+                        console.error(e)
+                        toast.error('Failed to delete lead')
+                    }
                 }
                 const handleEdit = (lead: Lead) => {
                     setEditing(lead)
@@ -98,11 +105,17 @@ const LeadsPage = ({ params }: { params: { teamId: string } }) => {
                         }}
                         submitLabel="Update Lead"
                         onSubmit={async (vals) => {
-                            const { data } = await apiClient.patch<Lead>('/leads', { id: editing.id, ...vals })
-                            setLeads(prev => prev.map(l => l.id === editing.id ? data : l))
-                            setFilteredLeads(prev => prev.map(l => l.id === editing.id ? data : l))
-                            setIsEditOpen(false)
-                            setEditing(null)
+                            try {
+                                const { data } = await apiClient.patch<Lead>('/leads', { id: editing.id, ...vals })
+                                setLeads(prev => prev.map(l => l.id === editing.id ? data : l))
+                                setFilteredLeads(prev => prev.map(l => l.id === editing.id ? data : l))
+                                toast.success('Lead updated')
+                                setIsEditOpen(false)
+                                setEditing(null)
+                            } catch (e) {
+                                console.error(e)
+                                toast.error('Failed to update lead')
+                            }
                         }}
                     />
                 )}

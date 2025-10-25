@@ -8,6 +8,7 @@ import { Contact, Role } from '@prisma/client';
 import { useAuth } from '@/contexts/auth_context';
 import Modal from '@/components/popups/modal';
 import { ContactForm } from '@/components/forms/contact_form';
+import { toast } from 'sonner';
 import ActivityLoader from '@/components/activity_loader';
 
 // interface Contact {
@@ -70,9 +71,15 @@ const ContactsPage = ({ params }: { params: { teamId: string } }) => {
                 const canDelete = role === Role.ADMIN || role === Role.OWNER
                 const handleDelete = async (id: string) => {
                     if (!confirm('Delete this contact?')) return
-                    await apiClient.delete('/contacts', { data: { id } })
-                    setContacts(prev => prev.filter(c => c.id !== id))
-                    setFilteredContacts(prev => prev.filter(c => c.id !== id))
+                    try {
+                        await apiClient.delete('/contacts', { data: { id } })
+                        setContacts(prev => prev.filter(c => c.id !== id))
+                        setFilteredContacts(prev => prev.filter(c => c.id !== id))
+                        toast.success('Contact deleted')
+                    } catch (e) {
+                        console.error(e)
+                        toast.error('Failed to delete contact')
+                    }
                 }
                 const handleEdit = (contact: Contact) => {
                     setEditing(contact)
@@ -100,11 +107,17 @@ const ContactsPage = ({ params }: { params: { teamId: string } }) => {
                         }}
                         submitLabel="Update Contact"
                         onSubmit={async (vals) => {
-                            const { data } = await apiClient.patch<Contact>('/contacts', { id: editing.id, ...vals })
-                            setContacts(prev => prev.map(c => c.id === editing.id ? data : c))
-                            setFilteredContacts(prev => prev.map(c => c.id === editing.id ? data : c))
-                            setIsEditOpen(false)
-                            setEditing(null)
+                            try {
+                                const { data } = await apiClient.patch<Contact>('/contacts', { id: editing.id, ...vals })
+                                setContacts(prev => prev.map(c => c.id === editing.id ? data : c))
+                                setFilteredContacts(prev => prev.map(c => c.id === editing.id ? data : c))
+                                toast.success('Contact updated')
+                                setIsEditOpen(false)
+                                setEditing(null)
+                            } catch (e) {
+                                console.error(e)
+                                toast.error('Failed to update contact')
+                            }
                         }}
                     />
                 )}
