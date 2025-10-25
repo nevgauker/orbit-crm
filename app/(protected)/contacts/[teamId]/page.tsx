@@ -10,6 +10,9 @@ import Modal from '@/components/popups/modal';
 import { ContactForm } from '@/components/forms/contact_form';
 import { toast } from 'sonner';
 import ActivityLoader from '@/components/activity_loader';
+import TableSkeleton from '@/components/tables/table_skeleton';
+import EmptyState from '@/components/empty_state';
+import { UsersRound } from 'lucide-react';
 
 // interface Contact {
 //     id: string;
@@ -66,7 +69,7 @@ const ContactsPage = ({ params }: { params: { teamId: string } }) => {
                 </Link>
             </div>
             {(() => {
-                if (loading) return <ActivityLoader />
+                if (loading) return <TableSkeleton columns={6} rows={6} />
                 const role = user?.roles.find(r => r.teamId === teamId)?.role
                 const canDelete = role === Role.ADMIN || role === Role.OWNER
                 const handleDelete = async (id: string) => {
@@ -85,13 +88,20 @@ const ContactsPage = ({ params }: { params: { teamId: string } }) => {
                     setEditing(contact)
                     setIsEditOpen(true)
                 }
-                return (
+                return filteredContacts.length > 0 ? (
                     <ContactsDataTable
                         data={filteredContacts}
                         canDelete={canDelete}
                         canEdit={true}
                         onDelete={handleDelete}
                         onEdit={handleEdit}
+                    />
+                ) : (
+                    <EmptyState
+                        icon={<UsersRound size={18} />}
+                        title="No contacts yet"
+                        description="Get started by creating your first contact."
+                        action={{ href: `/contacts/create/${teamId}`, label: 'Create Contact' }}
                     />
                 )
             })()}

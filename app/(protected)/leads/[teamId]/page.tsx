@@ -1,5 +1,8 @@
 'use client'
 import ActivityLoader from "@/components/activity_loader";
+import TableSkeleton from "@/components/tables/table_skeleton";
+import EmptyState from "@/components/empty_state";
+import { UserPlus } from "lucide-react";
 import LeadsDataTable from "@/components/tables/leads_datatable";
 import apiClient from "@/utils/api_client";
 import { Lead, Role } from "@prisma/client";
@@ -70,7 +73,7 @@ const LeadsPage = ({ params }: { params: { teamId: string } }) => {
                 </Link>
             </div>
             {(() => {
-                if (loading) return <ActivityLoader />
+                if (loading) return <TableSkeleton columns={6} rows={6} />
                 const role = user?.roles.find(r => r.teamId === teamId)?.role
                 const canDelete = role === Role.ADMIN || role === Role.OWNER
                 const handleDelete = async (id: string) => {
@@ -89,8 +92,15 @@ const LeadsPage = ({ params }: { params: { teamId: string } }) => {
                     setEditing(lead)
                     setIsEditOpen(true)
                 }
-                return (
+                return filteredLeads.length > 0 ? (
                     <LeadsDataTable data={filteredLeads} canDelete={canDelete} canEdit={true} onDelete={handleDelete} onEdit={handleEdit} />
+                ) : (
+                    <EmptyState
+                        icon={<UserPlus size={18} />}
+                        title="No leads yet"
+                        description="Create a lead to start building your pipeline."
+                        action={{ href: `/leads/create/${teamId}`, label: 'Create Lead' }}
+                    />
                 )
             })()}
             <Modal isOpen={isEditOpen} title="Edit Lead" onClose={() => setIsEditOpen(false)}>

@@ -1,5 +1,8 @@
 'use client'
 import ActivityLoader from "@/components/activity_loader";
+import TableSkeleton from "@/components/tables/table_skeleton";
+import EmptyState from "@/components/empty_state";
+import { Briefcase } from "lucide-react";
 import OpportunitiesDataTable from "@/components/tables/opportunities_datatable";
 import apiClient from "@/utils/api_client";
 import { Lead, Opportunity, Role } from "@prisma/client";
@@ -60,7 +63,7 @@ const OpportunitiesPage = ({ params }: { params: { teamId: string } }) => {
                 </Link>
             </div>
             {(() => {
-                if (loading) return <ActivityLoader />
+                if (loading) return <TableSkeleton columns={5} rows={6} />
                 const role = user?.roles.find(r => r.teamId === teamId)?.role
                 const canDelete = role === Role.ADMIN || role === Role.OWNER
                 const handleDelete = async (id: string) => {
@@ -79,13 +82,20 @@ const OpportunitiesPage = ({ params }: { params: { teamId: string } }) => {
                     setEditing(op)
                     setIsEditOpen(true)
                 }
-                return (
+                return filteredOpportunities.length > 0 ? (
                     <OpportunitiesDataTable
                         data={filteredOpportunities}
                         canDelete={canDelete}
                         canEdit={true}
                         onDelete={handleDelete}
                         onEdit={handleEdit}
+                    />
+                ) : (
+                    <EmptyState
+                        icon={<Briefcase size={18} />}
+                        title="No opportunities yet"
+                        description="Create an opportunity to start tracking your pipeline."
+                        action={{ href: `/opportunities/create/${teamId}`, label: 'Create Opportunity' }}
                     />
                 )
             })()}

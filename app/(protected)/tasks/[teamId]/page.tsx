@@ -1,5 +1,8 @@
 'use client'
 import ActivityLoader from "@/components/activity_loader";
+import TableSkeleton from "@/components/tables/table_skeleton";
+import EmptyState from "@/components/empty_state";
+import { CheckSquare } from "lucide-react";
 import TasksDataTable from "@/components/tables/tasks_datatable";
 import apiClient from "@/utils/api_client";
 import { Role, Task } from "@prisma/client";
@@ -61,7 +64,7 @@ const TasksPage = ({ params }: { params: { teamId: string } }) => {
             </div>
             <div className="bg-white p-4 shadow rounded-md">
                 {(() => {
-                    if (loading) return <ActivityLoader />
+                    if (loading) return <TableSkeleton columns={6} rows={6} />
                     const role = user?.roles.find(r => r.teamId === teamId)?.role
                     const canDelete = role === Role.ADMIN || role === Role.OWNER
                     const handleDelete = async (id: string) => {
@@ -80,13 +83,20 @@ const TasksPage = ({ params }: { params: { teamId: string } }) => {
                         setEditing(task)
                         setIsEditOpen(true)
                     }
-                    return (
+                    return filteredTasks.length > 0 ? (
                         <TasksDataTable
                             data={filteredTasks}
                             canDelete={canDelete}
                             canEdit={true}
                             onDelete={handleDelete}
                             onEdit={handleEdit}
+                        />
+                    ) : (
+                        <EmptyState
+                            icon={<CheckSquare size={18} />}
+                            title="No tasks yet"
+                            description="Create a task to keep work moving forward."
+                            action={{ href: `/tasks/create/${teamId}`, label: 'Create Task' }}
                         />
                     )
                 })()}
