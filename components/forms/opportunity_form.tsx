@@ -60,10 +60,10 @@ export default function OpportunityCreateForm({
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-md shadow-md w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">{submitLabel}</h2>
+        <form onSubmit={handleSubmit} className="rounded-lg border bg-card p-6 w-full max-w-md">
+            <h2 className="text-xl font-semibold mb-4">{submitLabel}</h2>
             <div className="mb-4">
-                <label htmlFor="title" className="block text-sm font-medium mb-1">
+                <label htmlFor="title" className="block text-sm text-muted-foreground mb-1">
                     Title
                 </label>
                 <input
@@ -71,25 +71,25 @@ export default function OpportunityCreateForm({
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="w-full px-4 py-2 border rounded-md"
+                    className="w-full px-4 py-2 border rounded-md bg-background"
                     placeholder="Opportunity title"
                     required
                 />
             </div>
             <div className="mb-4">
-                <label htmlFor="description" className="block text-sm font-medium mb-1">
+                <label htmlFor="description" className="block text-sm text-muted-foreground mb-1">
                     Description
                 </label>
                 <textarea
                     id="description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="w-full px-4 py-2 border rounded-md"
+                    className="w-full px-4 py-2 border rounded-md bg-background"
                     placeholder="Opportunity description (optional)"
                 />
             </div>
             <div className="mb-4">
-                <label htmlFor="value" className="block text-sm font-medium mb-1">
+                <label htmlFor="value" className="block text-sm text-muted-foreground mb-1">
                     Value
                 </label>
                 <input
@@ -97,19 +97,19 @@ export default function OpportunityCreateForm({
                     type="number"
                     value={value}
                     onChange={(e) => setValue(Number(e.target.value))}
-                    className="w-full px-4 py-2 border rounded-md"
+                    className="w-full px-4 py-2 border rounded-md bg-background"
                     placeholder="Opportunity value"
                 />
             </div>
             <div className="mb-4">
-                <label htmlFor="status" className="block text-sm font-medium mb-1">
+                <label htmlFor="status" className="block text-sm text-muted-foreground mb-1">
                     Status
                 </label>
                 <select
                     id="status"
                     value={status}
                     onChange={(e) => setStatus(e.target.value as 'OPEN' | 'IN_PROGRESS' | 'WON' | 'LOST')}
-                    className="w-full px-4 py-2 border rounded-md"
+                    className="w-full px-4 py-2 border rounded-md bg-background"
                 >
                     <option value="OPEN">Open</option>
                     <option value="IN_PROGRESS">In Progress</option>
@@ -118,14 +118,14 @@ export default function OpportunityCreateForm({
                 </select>
             </div>
             <div className="mb-4">
-                <label htmlFor="lead" className="block text-sm font-medium mb-1">
+                <label htmlFor="lead" className="block text-sm text-muted-foreground mb-1">
                     Lead
                 </label>
                 <select
                     id="lead"
                     value={leadId}
                     onChange={(e) => setLeadId(e.target.value)}
-                    className="w-full px-4 py-2 border rounded-md"
+                    className="w-full px-4 py-2 border rounded-md bg-background"
                     required
                 >
                     <option value="" disabled>
@@ -140,7 +140,7 @@ export default function OpportunityCreateForm({
             </div>
             <button
                 type="submit"
-                className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                className="w-full px-4 py-2 rounded-md bg-primary text-primary-foreground hover:opacity-90"
             >
                 {submitLabel}
             </button>

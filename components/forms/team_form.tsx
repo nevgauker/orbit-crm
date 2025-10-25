@@ -46,11 +46,11 @@ export default function TeamCreationForm({ onTeamCreated }: TeamCreationFormProp
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white p-6 shadow-md rounded-md">
-      <h2 className="text-lg font-bold mb-4">Create a New Team</h2>
+    <div className="max-w-md mx-auto rounded-lg border bg-card p-6">
+      <h2 className="text-lg font-semibold mb-4">Create a New Team</h2>
       {error && <p className="text-red-600 text-sm mb-2">{error}</p>}
       <div className="mb-4">
-        <label htmlFor="name" className="block text-sm font-medium mb-1">
+        <label htmlFor="name" className="block text-sm text-muted-foreground mb-1">
           Team Name
         </label>
         <input
@@ -58,19 +58,19 @@ export default function TeamCreationForm({ onTeamCreated }: TeamCreationFormProp
           id="name"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          className="w-full px-4 py-2 border rounded-md"
+          className="w-full px-4 py-2 border rounded-md bg-background"
           placeholder="Enter team name"
         />
       </div>
       <div className="mb-4">
-        <label htmlFor="description" className="block text-sm font-medium mb-1">
+        <label htmlFor="description" className="block text-sm text-muted-foreground mb-1">
           Description (optional)
         </label>
         <textarea
           id="description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          className="w-full px-4 py-2 border rounded-md"
+          className="w-full px-4 py-2 border rounded-md bg-background"
           placeholder="Enter a brief description of the team"
         ></textarea>
       </div>
@@ -78,8 +78,7 @@ export default function TeamCreationForm({ onTeamCreated }: TeamCreationFormProp
         <button
           onClick={handleCreateTeam}
           disabled={loading}
-          className={`px-4 py-2 rounded-md text-white ${loading ? "bg-gray-400" : "bg-blue-600 hover:bg-blue-700"
-            }`}
+          className={`px-4 py-2 rounded-md ${loading ? "bg-gray-400 text-white" : "bg-primary text-primary-foreground hover:opacity-90"}`}
         >
           {loading ? "Creating..." : "Create Team"}
         </button>

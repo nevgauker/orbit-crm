@@ -53,10 +53,10 @@ export default function TaskCreateForm({ teamId, onSubmit, initialValues, submit
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white p-6 rounded-md shadow-md w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">{submitLabel}</h2>
+        <form onSubmit={handleSubmit} className="rounded-lg border bg-card p-6 w-full max-w-md">
+            <h2 className="text-xl font-semibold mb-4">{submitLabel}</h2>
             <div className="mb-4">
-                <label htmlFor="title" className="block text-sm font-medium mb-1">
+                <label htmlFor="title" className="block text-sm text-muted-foreground mb-1">
                     Title
                 </label>
                 <input
@@ -64,25 +64,25 @@ export default function TaskCreateForm({ teamId, onSubmit, initialValues, submit
                     type="text"
                     value={title}
                     onChange={(e) => setTitle(e.target.value)}
-                    className="w-full px-4 py-2 border rounded-md"
+                    className="w-full px-4 py-2 border rounded-md bg-background"
                     placeholder="Task title"
                     required
                 />
             </div>
             <div className="mb-4">
-                <label htmlFor="description" className="block text-sm font-medium mb-1">
+                <label htmlFor="description" className="block text-sm text-muted-foreground mb-1">
                     Description
                 </label>
                 <textarea
                     id="description"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    className="w-full px-4 py-2 border rounded-md"
+                    className="w-full px-4 py-2 border rounded-md bg-background"
                     placeholder="Task description (optional)"
                 />
             </div>
             <div className="mb-4">
-                <label htmlFor="dueDate" className="block text-sm font-medium mb-1">
+                <label htmlFor="dueDate" className="block text-sm text-muted-foreground mb-1">
                     Due Date
                 </label>
                 <input
@@ -90,18 +90,18 @@ export default function TaskCreateForm({ teamId, onSubmit, initialValues, submit
                     type="date"
                     value={dueDate}
                     onChange={(e) => setDueDate(e.target.value)}
-                    className="w-full px-4 py-2 border rounded-md"
+                    className="w-full px-4 py-2 border rounded-md bg-background"
                 />
             </div>
             <div className="mb-4">
-                <label htmlFor="status" className="block text-sm font-medium mb-1">
+                <label htmlFor="status" className="block text-sm text-muted-foreground mb-1">
                     Status
                 </label>
                 <select
                     id="status"
                     value={status}
                     onChange={(e) => setStatus(e.target.value as 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'OVERDUE')}
-                    className="w-full px-4 py-2 border rounded-md"
+                    className="w-full px-4 py-2 border rounded-md bg-background"
                 >
                     <option value="PENDING">Pending</option>
                     <option value="IN_PROGRESS">In Progress</option>
@@ -110,14 +110,14 @@ export default function TaskCreateForm({ teamId, onSubmit, initialValues, submit
                 </select>
             </div>
             <div className="mb-4">
-                <label htmlFor="priority" className="block text-sm font-medium mb-1">
+                <label htmlFor="priority" className="block text-sm text-muted-foreground mb-1">
                     Priority
                 </label>
                 <select
                     id="priority"
                     value={priority}
                     onChange={(e) => setPriority(e.target.value as 'HIGH' | 'MEDIUM' | 'LOW')}
-                    className="w-full px-4 py-2 border rounded-md"
+                    className="w-full px-4 py-2 border rounded-md bg-background"
                 >
                     <option value="HIGH">High</option>
                     <option value="MEDIUM">Medium</option>
@@ -126,7 +126,7 @@ export default function TaskCreateForm({ teamId, onSubmit, initialValues, submit
             </div>
             <button
                 type="submit"
-                className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                className="w-full px-4 py-2 rounded-md bg-primary text-primary-foreground hover:opacity-90"
             >
                 {submitLabel}
             </button>

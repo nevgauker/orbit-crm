@@ -34,15 +34,15 @@ const SignUpPage = () => {
     }
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100">
+        <div className="min-h-screen flex flex-col items-center justify-center bg-background">
             {loading ? <ActivityLoader /> : <><form
                 onSubmit={handleSubmit}
-                className="bg-white p-6 rounded shadow-md w-full max-w-md"
+                className="rounded-lg border bg-card p-6 w-full max-w-md"
             >
-                <h2 className="text-2xl font-bold mb-6">Sign Up</h2>
+                <h2 className="text-2xl font-semibold mb-6">Sign Up</h2>
 
                 <div className="mb-4">
-                    <label className="block text-sm font-medium mb-2" htmlFor="name">
+                    <label className="block text-sm text-muted-foreground mb-1" htmlFor="name">
                         Name
                     </label>
                     <input
@@ -52,12 +52,12 @@ const SignUpPage = () => {
                         value={formData.name}
                         onChange={handleChange}
                         required
-                        className="w-full border px-3 py-2 rounded"
+                        className="w-full border px-3 py-2 rounded-md bg-background"
                     />
                 </div>
 
                 <div className="mb-4">
-                    <label className="block text-sm font-medium mb-2" htmlFor="email">
+                    <label className="block text-sm text-muted-foreground mb-1" htmlFor="email">
                         Email
                     </label>
                     <input
@@ -67,12 +67,12 @@ const SignUpPage = () => {
                         value={formData.email}
                         onChange={handleChange}
                         required
-                        className="w-full border px-3 py-2 rounded"
+                        className="w-full border px-3 py-2 rounded-md bg-background"
                     />
                 </div>
 
                 <div className="mb-6">
-                    <label className="block text-sm font-medium mb-2" htmlFor="password">
+                    <label className="block text-sm text-muted-foreground mb-1" htmlFor="password">
                         Password
                     </label>
                     <input
@@ -82,7 +82,7 @@ const SignUpPage = () => {
                         value={formData.password}
                         onChange={handleChange}
                         required
-                        className="w-full border px-3 py-2 rounded"
+                        className="w-full border px-3 py-2 rounded-md bg-background"
                     />
                 </div>
 
@@ -90,7 +90,7 @@ const SignUpPage = () => {
 
                 <button
                     type="submit"
-                    className="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
+                    className="w-full px-4 py-2 rounded-md bg-primary text-primary-foreground hover:opacity-90"
                 >
                     Sign Up
                 </button>

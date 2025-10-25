@@ -39,36 +39,36 @@ export const ContactForm = ({ onSubmit, initialValues, submitLabel = 'Save Conta
     })
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 rounded-lg border bg-card p-6">
             <div>
-                <label htmlFor="firstName" className="block text-sm font-medium">First Name</label>
-                <input id="firstName" {...register('firstName')} className="w-full border px-3 py-2" />
-                {errors.firstName && <p className="text-red-600 text-sm">{errors.firstName.message}</p>}
+                <label htmlFor="firstName" className="block text-sm text-muted-foreground">First Name</label>
+                <input id="firstName" {...register('firstName')} className="w-full border rounded-md px-3 py-2 bg-background" />
+                {errors.firstName && <p className="text-red-600 text-xs mt-1">{errors.firstName.message}</p>}
             </div>
 
             <div>
-                <label htmlFor="lastName" className="block text-sm font-medium">Last Name</label>
-                <input id="lastName" {...register('lastName')} className="w-full border px-3 py-2" />
-                {errors.lastName && <p className="text-red-600 text-sm">{errors.lastName.message}</p>}
+                <label htmlFor="lastName" className="block text-sm text-muted-foreground">Last Name</label>
+                <input id="lastName" {...register('lastName')} className="w-full border rounded-md px-3 py-2 bg-background" />
+                {errors.lastName && <p className="text-red-600 text-xs mt-1">{errors.lastName.message}</p>}
             </div>
 
             <div>
-                <label htmlFor="email" className="block text-sm font-medium">Email</label>
-                <input id="email" {...register('email')} className="w-full border px-3 py-2" />
-                {errors.email && <p className="text-red-600 text-sm">{errors.email.message}</p>}
+                <label htmlFor="email" className="block text-sm text-muted-foreground">Email</label>
+                <input id="email" {...register('email')} className="w-full border rounded-md px-3 py-2 bg-background" />
+                {errors.email && <p className="text-red-600 text-xs mt-1">{errors.email.message}</p>}
             </div>
 
             <div>
-                <label htmlFor="phone" className="block text-sm font-medium">Phone</label>
-                <input id="phone" {...register('phone')} className="w-full border px-3 py-2" />
+                <label htmlFor="phone" className="block text-sm text-muted-foreground">Phone</label>
+                <input id="phone" {...register('phone')} className="w-full border rounded-md px-3 py-2 bg-background" />
             </div>
 
             <div>
-                <label htmlFor="company" className="block text-sm font-medium">Company</label>
-                <input id="company" {...register('company')} className="w-full border px-3 py-2" />
+                <label htmlFor="company" className="block text-sm text-muted-foreground">Company</label>
+                <input id="company" {...register('company')} className="w-full border rounded-md px-3 py-2 bg-background" />
             </div>
 
-            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">{submitLabel}</button>
+            <button type="submit" className="px-4 py-2 rounded-md bg-primary text-primary-foreground hover:opacity-90">{submitLabel}</button>
         </form>
     )
 }
