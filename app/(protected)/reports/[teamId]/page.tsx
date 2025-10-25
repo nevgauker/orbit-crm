@@ -1,10 +1,11 @@
 import { ChartsSection } from "@/components/reports/charts_section";
 import { KPISection } from "@/components/reports/kpi_section";
-import { getKpis } from "@/db/report";
+import { getKpis, getMonthlyStats } from "@/db/report";
 
 export default async function ReportsPage({ params }: { params: { teamId: string } }) {
     const { teamId } = params
     const kpis = await getKpis(teamId)
+    const { labels, opportunitiesPerMonth, revenuePerMonth } = await getMonthlyStats(teamId)
     return (
         <div className="p-6 bg-gray-100 min-h-screen">
             <h1 className="text-2xl font-bold text-gray-800 mb-4">Reports</h1>
@@ -13,7 +14,7 @@ export default async function ReportsPage({ params }: { params: { teamId: string
             </p>
 
             <KPISection {...kpis} />
-            <ChartsSection />
+            <ChartsSection labels={labels} opportunitiesPerMonth={opportunitiesPerMonth} revenuePerMonth={revenuePerMonth} />
         </div>
     )
 }
