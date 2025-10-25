@@ -25,7 +25,7 @@ export const packages: Package[] = [
         name: "Pro Plan",
         price: "$15/month",
         features: ["Up to 5 Users", "Up to 5 Teams", "Priority Support"],
-        link: "/signup?plan=pro",
+        link: "/pricing/purchase/4483",
         userType: UserType.PRO,
         buttonText: "Upgrade to Pro"
 

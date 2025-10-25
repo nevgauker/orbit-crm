@@ -1,34 +1,25 @@
-import db from "@/db/db"
-import { notFound } from "next/navigation"
-import Stripe from "stripe"
-// import { CheckoutForm } from "../_components/CheckoutForm"
+"use client";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
+import apiClient from "@/utils/api_client";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string)
-
-export default async function PurchasePage({
-  params: { packageId },
-}: {
-  params: { packageId: string }
-}) {
-
-
-  // const product = await db.product.findUnique({ where: { id } })
-  // if (product == null) return notFound()
-
-  // const paymentIntent = await stripe.paymentIntents.create({
-  //   amount: product.priceInCents,
-  //   currency: "USD",
-  //   metadata: { productId: product.id },
-  // })
-
-  // if (paymentIntent.client_secret == null) {
-  //   throw Error("Stripe failed to create payment intent")
-  // }
-
-  return (<></>
-    // <CheckoutForm
-    //   product={product}
-    //   clientSecret={paymentIntent.client_secret}
-    // />
-  )
+export default function PurchasePage({ params: { packageId } }: { params: { packageId: string } }) {
+  const router = useRouter();
+  useEffect(() => {
+    const go = async () => {
+      try {
+        const { data } = await apiClient.post("/stripe/checkout", { packageId });
+        if (data?.url) {
+          window.location.href = data.url;
+        } else {
+          router.push("/pricing?error=1");
+        }
+      } catch (e) {
+        console.error(e);
+        router.push("/pricing?error=1");
+      }
+    };
+    go();
+  }, [packageId, router]);
+  return <div className="p-6">Redirecting to payment...</div>;
 }
