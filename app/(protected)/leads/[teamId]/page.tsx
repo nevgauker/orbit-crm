@@ -1,5 +1,4 @@
 'use client'
-import ActivityLoader from "@/components/activity_loader";
 import TableSkeleton from "@/components/tables/table_skeleton";
 import EmptyState from "@/components/empty_state";
 import { UserPlus } from "lucide-react";
@@ -15,7 +14,7 @@ import { toast } from "sonner";
 
 const LeadsPage = ({ params }: { params: { teamId: string } }) => {
     const { teamId } = params
-    const [leads, setLeads] = useState<Lead[]>([])
+    const [, setLeads] = useState<Lead[]>([])
     const [filteredLeads, setFilteredLeads] = useState<Lead[]>([])
     const [loading, setLoading] = useState(true)
     const [isEditOpen, setIsEditOpen] = useState(false)
@@ -39,21 +38,7 @@ const LeadsPage = ({ params }: { params: { teamId: string } }) => {
 
         fetchLeads();
     }, [teamId]);
-    const handleSearch = () => {
-        const filtered = leads.filter(
-            (lead) =>
-                lead.firstName.toLowerCase().includes(search.toLowerCase()) ||
-                lead.lastName.toLowerCase().includes(search.toLowerCase()) ||
-                lead.email.toLowerCase().includes(search.toLowerCase()) ||
-                (lead.phone && lead.phone.toLowerCase().includes(search.toLowerCase()))
-        )
-        setFilteredLeads(filtered);
-    }
-
-    const handleClear = () => {
-        setSearch('');
-        setFilteredLeads(leads); // Reset to all data
-    }
+    // DataTable handles filtering
 
 
     return (

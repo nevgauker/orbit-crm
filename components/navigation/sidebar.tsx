@@ -8,7 +8,9 @@ import {
   LayoutDashboard, Users, UserPlus, Briefcase, CheckSquare, BarChart3, Mail, Settings, LogOut, UsersRound 
 } from 'lucide-react';
 
-function NavItem({ href, icon: Icon, label, collapsed }: { href: string; icon: any; label: string; collapsed: boolean }) {
+type IconType = React.ComponentType<{ size?: number | string; className?: string }>
+
+function NavItem({ href, icon: Icon, label, collapsed }: { href: string; icon: IconType; label: string; collapsed: boolean }) {
   return (
     <Link href={href} className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-foreground hover:bg-accent hover:text-accent-foreground">
       <Icon size={18} className="shrink-0" />
@@ -64,3 +66,6 @@ export default function Sidebar() {
     </div>
   );
 }
+
+
+

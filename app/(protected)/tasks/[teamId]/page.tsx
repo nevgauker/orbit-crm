@@ -1,5 +1,4 @@
 'use client'
-import ActivityLoader from "@/components/activity_loader";
 import TableSkeleton from "@/components/tables/table_skeleton";
 import EmptyState from "@/components/empty_state";
 import { CheckSquare } from "lucide-react";
@@ -17,9 +16,8 @@ import { toast } from "sonner";
 const TasksPage = ({ params }: { params: { teamId: string } }) => {
 
     const { teamId } = params
-    const [tasks, setTasks] = useState<Task[]>([])
+    const [, setTasks] = useState<Task[]>([])
     const [filteredTasks, setFilteredTasks] = useState<Task[]>([])
-    const [search, setSearch] = useState('')
     const [loading, setLoading] = useState(true)
     const { user } = useAuth()
     const [isEditOpen, setIsEditOpen] = useState(false)
@@ -109,8 +107,8 @@ const TasksPage = ({ params }: { params: { teamId: string } }) => {
                             title: editing.title,
                             description: editing.description ?? '',
                             dueDate: editing.dueDate ? String(editing.dueDate) : undefined,
-                            status: editing.status as any,
-                            priority: editing.priority as any,
+                            status: editing.status as 'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'OVERDUE',
+                            priority: editing.priority as 'HIGH' | 'MEDIUM' | 'LOW',
                             teamId,
                         }}
                         submitLabel="Update Task"

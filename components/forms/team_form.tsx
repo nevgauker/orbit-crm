@@ -37,7 +37,7 @@ export default function TeamCreationForm({ onTeamCreated }: TeamCreationFormProp
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         const status = err.response?.status
-        const message = (err.response?.data as any)?.error || (err.response?.data as any)?.message || err.message
+        const message = (() => { const data = err.response?.data as unknown; if (data && typeof data === "object") { const rec = data as Record<string, unknown>; return (rec.error as string) || (rec.message as string) || err.message; } return err.message; })()
         setError(message || "Failed to create team. Please try again.")
         if (status === 403) {
           toast.error("Team limit reached for your plan", {
@@ -102,3 +102,4 @@ export default function TeamCreationForm({ onTeamCreated }: TeamCreationFormProp
     </div>
   );
 }
+

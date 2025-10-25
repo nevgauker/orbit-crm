@@ -1,5 +1,4 @@
 'use client'
-import ActivityLoader from "@/components/activity_loader";
 import TableSkeleton from "@/components/tables/table_skeleton";
 import EmptyState from "@/components/empty_state";
 import { Briefcase } from "lucide-react";
@@ -15,9 +14,8 @@ import { toast } from "sonner";
 
 const OpportunitiesPage = ({ params }: { params: { teamId: string } }) => {
     const { teamId } = params
-    const [opportunities, setOpportunities] = useState<Opportunity[]>([])
+    const [, setOpportunities] = useState<Opportunity[]>([])
     const [filteredOpportunities, setFilteredOpportunities] = useState<Opportunity[]>([])
-    const [search, setSearch] = useState('')
     const [loading, setLoading] = useState(true)
     const { user } = useAuth()
     const [isEditOpen, setIsEditOpen] = useState(false)
@@ -108,8 +106,8 @@ const OpportunitiesPage = ({ params }: { params: { teamId: string } }) => {
                             title: editing.title,
                             description: editing.description ?? '',
                             value: editing.value,
-                            status: editing.status as any,
-                            leadId: (editing as any).leadId ?? '',
+                            status: editing.status as 'OPEN' | 'IN_PROGRESS' | 'WON' | 'LOST',
+                            leadId: editing.leadId ?? '',
                             teamId,
                         }}
                         submitLabel="Update Opportunity"

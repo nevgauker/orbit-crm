@@ -4,8 +4,7 @@ import { requireEnv } from "@/utils/env";
 import { getAuthUserId } from "@/utils/authorization";
 import { UserType } from "@prisma/client";
 
-const STRIPE_SECRET_KEY = requireEnv("STRIPE_SECRET_KEY");
-const stripe = new Stripe(STRIPE_SECRET_KEY, { apiVersion: "2024-06-20" });
+// Defer Stripe initialization to the handler to avoid build-time env requirement
 
 const PRICE_MAP: Record<string, { priceIdEnv: string; userType: UserType }> = {
   "4483": { priceIdEnv: "STRIPE_PRICE_PRO", userType: UserType.PRO },
@@ -14,6 +13,8 @@ const PRICE_MAP: Record<string, { priceIdEnv: string; userType: UserType }> = {
 
 export async function POST(req: NextRequest) {
   try {
+    const STRIPE_SECRET_KEY = requireEnv("STRIPE_SECRET_KEY");
+    const stripe = new Stripe(STRIPE_SECRET_KEY);
     const userId = await getAuthUserId(req as unknown as Request);
     const { packageId } = await req.json();
 
@@ -41,4 +42,5 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Failed to create checkout session" }, { status: 500 });
   }
 }
+
 

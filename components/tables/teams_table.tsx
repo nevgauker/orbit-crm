@@ -34,8 +34,9 @@ export function TeamRolesTable() {
         try {
             const initRes = await apiClient.post(`/invite/initiate`, { email, teamId, role })
             inviteLink = initRes.data?.inviteLink
-        } catch (e: any) {
-            const status = e?.response?.status
+        } catch (e: unknown) {
+            // Narrow axios error
+            const status = (axios.isAxiosError(e) ? e.response?.status : undefined)
             if (status === 403) {
                 toast.error('Team member limit reached', {
                     description: 'Upgrade your plan to invite more users.',

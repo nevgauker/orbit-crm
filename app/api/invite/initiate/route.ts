@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { Role } from "@prisma/client";
 import { z } from "zod";
 import db from "@/db/db";
-import { getAuthUserId, assertTeamMembership } from "@/utils/authorization";
+import { getAuthUserId } from "@/utils/authorization";
 import { getLimits, isWithinLimit } from "@/utils/limits";
 import jwt from "jsonwebtoken";
 import { requireEnv } from "@/utils/env";

@@ -5,7 +5,6 @@ import db from "@/db/db";
 import { getLimits, isWithinLimit } from "@/utils/limits";
 import jwt from "jsonwebtoken";
 import { Role } from "@prisma/client";
-import { z } from "zod";
 import { requireEnv } from "@/utils/env";
 
 const JWT_SECRET = requireEnv("JWT_SECRET");
@@ -16,7 +15,7 @@ export async function POST(req: NextRequest) {
         const token = body?.token as string | undefined;
         if (!token) return NextResponse.json({ message: "Missing token." }, { status: 400 });
 
-        let decoded: any;
+        let decoded: { email: string; teamId: string; role: Role } | null = null;
         try {
             decoded = jwt.verify(token, JWT_SECRET) as { email: string; teamId: string; role: Role };
         } catch {

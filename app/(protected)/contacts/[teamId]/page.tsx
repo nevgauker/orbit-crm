@@ -9,7 +9,6 @@ import { useAuth } from '@/contexts/auth_context';
 import Modal from '@/components/popups/modal';
 import { ContactForm } from '@/components/forms/contact_form';
 import { toast } from 'sonner';
-import ActivityLoader from '@/components/activity_loader';
 import TableSkeleton from '@/components/tables/table_skeleton';
 import EmptyState from '@/components/empty_state';
 import { UsersRound } from 'lucide-react';
@@ -24,7 +23,7 @@ import { UsersRound } from 'lucide-react';
 // }
 
 const ContactsPage = ({ params }: { params: { teamId: string } }) => {
-    const [contacts, setContacts] = useState<Contact[]>([])
+    const [, setContacts] = useState<Contact[]>([])
     const [filteredContacts, setFilteredContacts] = useState<Contact[]>([])
     const { teamId } = params
     const { user } = useAuth()
