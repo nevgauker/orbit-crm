@@ -1,7 +1,6 @@
 'use client'
 import ActivityLoader from "@/components/activity_loader";
-import { SearchBar } from "@/components/search_bar";
-import { OpportunitiesTable } from "@/components/tables/opportunities_table";
+import OpportunitiesDataTable from "@/components/tables/opportunities_datatable";
 import apiClient from "@/utils/api_client";
 import { Lead, Opportunity, Role } from "@prisma/client";
 import Link from "next/link";
@@ -40,19 +39,7 @@ const OpportunitiesPage = ({ params }: { params: { teamId: string } }) => {
         fetchAll()
     }, [teamId])
 
-    const handleSearch = () => {
-        const filtered = opportunities.filter(
-            (opportunity) =>
-                opportunity.title.toLowerCase().includes(search.toLowerCase()) ||
-                (opportunity.description && opportunity.description.toLowerCase().includes(search.toLowerCase()))
-        )
-        setFilteredOpportunities(filtered);
-    }
-
-    const handleClear = () => {
-        setSearch('');
-        setFilteredOpportunities(opportunities); // Reset to all data
-    }
+    // DataTable handles filtering; keep filteredOpportunities in sync with source
 
     return (
         <div className="p-6">
@@ -71,13 +58,6 @@ const OpportunitiesPage = ({ params }: { params: { teamId: string } }) => {
                     Create Opportunity
                 </Link>
             </div>
-            <SearchBar
-                search={search}
-                placeholder='Search by title, or description...'
-                setSearch={setSearch}
-                handleSearch={handleSearch}
-                handleClear={handleClear}
-            />
             {(() => {
                 if (loading) return <ActivityLoader />
                 const role = user?.roles.find(r => r.teamId === teamId)?.role
@@ -92,10 +72,14 @@ const OpportunitiesPage = ({ params }: { params: { teamId: string } }) => {
                     setEditing(op)
                     setIsEditOpen(true)
                 }
-                return opportunities.length > 0 ? (
-                    <OpportunitiesTable opportunities={filteredOpportunities} canDelete={canDelete} canEdit={true} onDelete={handleDelete} onEdit={handleEdit} />
-                ) : (
-                    <p>No opportunities found.</p>
+                return (
+                    <OpportunitiesDataTable
+                        data={filteredOpportunities}
+                        canDelete={canDelete}
+                        canEdit={true}
+                        onDelete={handleDelete}
+                        onEdit={handleEdit}
+                    />
                 )
             })()}
             <Modal isOpen={isEditOpen} title="Edit Opportunity" onClose={() => setIsEditOpen(false)}>
