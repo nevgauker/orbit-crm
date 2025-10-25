@@ -6,6 +6,8 @@ interface OpportunityCreateFormProps {
     leads: Lead[] // List of leads to associate with the opportunity
     teamId: string; // ID of the team this opportunity belongs to
     onSubmit: (opportunityData: OpportunityFormValues) => void; // Callback to handle form submission
+    initialValues?: OpportunityFormValues
+    submitLabel?: string
 }
 
 export interface OpportunityFormValues {
@@ -21,12 +23,14 @@ export default function OpportunityCreateForm({
     leads,
     teamId,
     onSubmit,
+    initialValues,
+    submitLabel = 'Create Opportunity',
 }: OpportunityCreateFormProps) {
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [value, setValue] = useState(0);
-    const [status, setStatus] = useState<'OPEN' | 'IN_PROGRESS' | 'WON' | 'LOST'>('OPEN');
-    const [leadId, setLeadId] = useState('');
+    const [title, setTitle] = useState(initialValues?.title ?? '');
+    const [description, setDescription] = useState(initialValues?.description ?? '');
+    const [value, setValue] = useState(initialValues?.value ?? 0);
+    const [status, setStatus] = useState<'OPEN' | 'IN_PROGRESS' | 'WON' | 'LOST'>(initialValues?.status ?? 'OPEN');
+    const [leadId, setLeadId] = useState(initialValues?.leadId ?? '');
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -57,7 +61,7 @@ export default function OpportunityCreateForm({
 
     return (
         <form onSubmit={handleSubmit} className="bg-white p-6 rounded-md shadow-md w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Create Opportunity</h2>
+            <h2 className="text-xl font-bold mb-4">{submitLabel}</h2>
             <div className="mb-4">
                 <label htmlFor="title" className="block text-sm font-medium mb-1">
                     Title
@@ -138,7 +142,7 @@ export default function OpportunityCreateForm({
                 type="submit"
                 className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
             >
-                Create Opportunity
+                {submitLabel}
             </button>
         </form>
     )

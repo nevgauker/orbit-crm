@@ -6,6 +6,8 @@ import apiClient from '@/utils/api_client';
 import { ContactsTable } from '@/components/tables/contacts_table';
 import { Contact, Role } from '@prisma/client';
 import { useAuth } from '@/contexts/auth_context';
+import Modal from '@/components/popups/modal';
+import { ContactForm } from '@/components/forms/contact_form';
 import { SearchBar } from '@/components/search_bar';
 import ActivityLoader from '@/components/activity_loader';
 
@@ -25,6 +27,8 @@ const ContactsPage = ({ params }: { params: { teamId: string } }) => {
     const { teamId } = params
     const { user } = useAuth()
     const [loading, setLoading] = useState(true)
+    const [isEditOpen, setIsEditOpen] = useState(false)
+    const [editing, setEditing] = useState<Contact | null>(null)
 
     useEffect(() => {
         // Fetch all contacts when the component loads
@@ -94,15 +98,9 @@ const ContactsPage = ({ params }: { params: { teamId: string } }) => {
                     setContacts(prev => prev.filter(c => c.id !== id))
                     setFilteredContacts(prev => prev.filter(c => c.id !== id))
                 }
-                const handleEdit = async (contact: Contact) => {
-                    const firstName = prompt('First name', contact.firstName) ?? contact.firstName
-                    const lastName = prompt('Last name', contact.lastName) ?? contact.lastName
-                    const email = prompt('Email', contact.email) ?? contact.email
-                    const phone = prompt('Phone', contact.phone ?? '') || undefined
-                    const company = prompt('Company', contact.company ?? '') || undefined
-                    const { data } = await apiClient.patch<Contact>('/contacts', { id: contact.id, firstName, lastName, email, phone, company })
-                    setContacts(prev => prev.map(c => c.id === contact.id ? data : c))
-                    setFilteredContacts(prev => prev.map(c => c.id === contact.id ? data : c))
+                const handleEdit = (contact: Contact) => {
+                    setEditing(contact)
+                    setIsEditOpen(true)
                 }
                 return filteredContacts.length > 0 ? (
                     <ContactsTable contacts={filteredContacts} canDelete={canDelete} canEdit={true} onDelete={handleDelete} onEdit={handleEdit} />
@@ -110,6 +108,27 @@ const ContactsPage = ({ params }: { params: { teamId: string } }) => {
                     <p>No contacts found.</p>
                 )
             })()}
+            <Modal isOpen={isEditOpen} title="Edit Contact" onClose={() => setIsEditOpen(false)}>
+                {editing && (
+                    <ContactForm
+                        initialValues={{
+                            firstName: editing.firstName,
+                            lastName: editing.lastName,
+                            email: editing.email,
+                            phone: editing.phone ?? '',
+                            company: editing.company ?? '',
+                        }}
+                        submitLabel="Update Contact"
+                        onSubmit={async (vals) => {
+                            const { data } = await apiClient.patch<Contact>('/contacts', { id: editing.id, ...vals })
+                            setContacts(prev => prev.map(c => c.id === editing.id ? data : c))
+                            setFilteredContacts(prev => prev.map(c => c.id === editing.id ? data : c))
+                            setIsEditOpen(false)
+                            setEditing(null)
+                        }}
+                    />
+                )}
+            </Modal>
         </div>
     )
 }

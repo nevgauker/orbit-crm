@@ -26,15 +26,18 @@ export type LeadFormValues = {
 
 interface LeadFormProps {
     onSubmit: (data: LeadFormValues) => void;
+    initialValues?: LeadFormValues;
+    submitLabel?: string;
 }
 
-export const LeadForm = ({ onSubmit }: LeadFormProps) => {
+export const LeadForm = ({ onSubmit, initialValues, submitLabel = 'Save Lead' }: LeadFormProps) => {
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm<LeadFormValues>({
         resolver: zodResolver(leadSchema),
+        defaultValues: initialValues,
     });
 
     return (
@@ -72,8 +75,7 @@ export const LeadForm = ({ onSubmit }: LeadFormProps) => {
                 {errors.status && <p className="text-red-600 text-sm">{errors.status.message}</p>}
             </div>
 
-            <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">Save Lead</button>
+            <button type="submit" className="bg-green-600 text-white px-4 py-2 rounded">{submitLabel}</button>
         </form>
     );
 };
-

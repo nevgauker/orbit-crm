@@ -7,6 +7,8 @@ import { Role, Task } from "@prisma/client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/auth_context";
+import Modal from "@/components/popups/modal";
+import TaskCreateForm, { TaskFormValues } from "@/components/forms/task_form";
 
 
 const TasksPage = ({ params }: { params: { teamId: string } }) => {
@@ -17,6 +19,8 @@ const TasksPage = ({ params }: { params: { teamId: string } }) => {
     const [search, setSearch] = useState('')
     const [loading, setLoading] = useState(true)
     const { user } = useAuth()
+    const [isEditOpen, setIsEditOpen] = useState(false)
+    const [editing, setEditing] = useState<Task | null>(null)
 
 
     useEffect(() => {
@@ -85,15 +89,9 @@ const TasksPage = ({ params }: { params: { teamId: string } }) => {
                         setTasks(prev => prev.filter(t => t.id !== id))
                         setFilteredTasks(prev => prev.filter(t => t.id !== id))
                     }
-                    const handleEdit = async (task: Task) => {
-                        const title = prompt('Title', task.title) ?? task.title
-                        const description = prompt('Description', task.description ?? '') || undefined
-                        const dueDate = prompt('Due date (YYYY-MM-DD)', task.dueDate ? String(task.dueDate).slice(0, 10) : '') || undefined
-                        const status = prompt('Status (PENDING, IN_PROGRESS, COMPLETED, OVERDUE)', task.status) as any ?? task.status
-                        const priority = prompt('Priority (HIGH, MEDIUM, LOW)', task.priority) as any ?? task.priority
-                        const { data } = await apiClient.patch<Task>('/tasks', { id: task.id, title, description, dueDate, status, priority })
-                        setTasks(prev => prev.map(t => t.id === task.id ? data : t))
-                        setFilteredTasks(prev => prev.map(t => t.id === task.id ? data : t))
+                    const handleEdit = (task: Task) => {
+                        setEditing(task)
+                        setIsEditOpen(true)
                     }
                     return filteredTasks.length > 0 ? (
                         <TasksTable tasks={filteredTasks} canDelete={canDelete} canEdit={true} onDelete={handleDelete} onEdit={handleEdit} />
@@ -102,6 +100,29 @@ const TasksPage = ({ params }: { params: { teamId: string } }) => {
                     )
                 })()}
             </div>
+            <Modal isOpen={isEditOpen} title="Edit Task" onClose={() => setIsEditOpen(false)}>
+                {editing && (
+                    <TaskCreateForm
+                        teamId={teamId}
+                        initialValues={{
+                            title: editing.title,
+                            description: editing.description ?? '',
+                            dueDate: editing.dueDate ? String(editing.dueDate) : undefined,
+                            status: editing.status as any,
+                            priority: editing.priority as any,
+                            teamId,
+                        }}
+                        submitLabel="Update Task"
+                        onSubmit={async (vals: TaskFormValues) => {
+                            const { data } = await apiClient.patch<Task>('/tasks', { id: editing.id, ...vals })
+                            setTasks(prev => prev.map(t => t.id === editing.id ? data : t))
+                            setFilteredTasks(prev => prev.map(t => t.id === editing.id ? data : t))
+                            setIsEditOpen(false)
+                            setEditing(null)
+                        }}
+                    />
+                )}
+            </Modal>
         </div>
     );
 }

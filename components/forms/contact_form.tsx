@@ -24,15 +24,18 @@ export type ContactFormValues = {
 
 interface ContactFormProps {
     onSubmit: (data: ContactFormValues) => void;
+    initialValues?: ContactFormValues;
+    submitLabel?: string;
 }
 
-export const ContactForm = ({ onSubmit }: ContactFormProps) => {
+export const ContactForm = ({ onSubmit, initialValues, submitLabel = 'Save Contact' }: ContactFormProps) => {
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm<ContactFormValues>({
         resolver: zodResolver(contactSchema),
+        defaultValues: initialValues,
     })
 
     return (
@@ -65,7 +68,7 @@ export const ContactForm = ({ onSubmit }: ContactFormProps) => {
                 <input id="company" {...register('company')} className="w-full border px-3 py-2" />
             </div>
 
-            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">Save Contact</button>
+            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">{submitLabel}</button>
         </form>
     )
 }

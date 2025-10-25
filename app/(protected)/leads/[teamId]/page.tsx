@@ -5,6 +5,8 @@ import { LeadsTable } from "@/components/tables/leads_table";
 import apiClient from "@/utils/api_client";
 import { Lead, Role } from "@prisma/client";
 import { useAuth } from "@/contexts/auth_context";
+import Modal from "@/components/popups/modal";
+import { LeadForm } from "@/components/forms/lead_form";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -14,6 +16,8 @@ const LeadsPage = ({ params }: { params: { teamId: string } }) => {
     const [filteredLeads, setFilteredLeads] = useState<Lead[]>([])
     const [search, setSearch] = useState('')
     const [loading, setLoading] = useState(true)
+    const [isEditOpen, setIsEditOpen] = useState(false)
+    const [editing, setEditing] = useState<Lead | null>(null)
     const { user } = useAuth()
 
 
@@ -83,15 +87,9 @@ const LeadsPage = ({ params }: { params: { teamId: string } }) => {
                     setLeads(prev => prev.filter(l => l.id !== id))
                     setFilteredLeads(prev => prev.filter(l => l.id !== id))
                 }
-                const handleEdit = async (lead: Lead) => {
-                    const firstName = prompt('First name', lead.firstName) ?? lead.firstName
-                    const lastName = prompt('Last name', lead.lastName) ?? lead.lastName
-                    const email = prompt('Email', lead.email) ?? lead.email
-                    const phone = prompt('Phone', lead.phone ?? '') || undefined
-                    const status = prompt('Status (NEW, CONTACTED, QUALIFIED, LOST)', lead.status) as any ?? lead.status
-                    const { data } = await apiClient.patch<Lead>('/leads', { id: lead.id, firstName, lastName, email, phone, status })
-                    setLeads(prev => prev.map(l => l.id === lead.id ? data : l))
-                    setFilteredLeads(prev => prev.map(l => l.id === lead.id ? data : l))
+                const handleEdit = (lead: Lead) => {
+                    setEditing(lead)
+                    setIsEditOpen(true)
                 }
                 return leads.length > 0 ? (
                     <LeadsTable leads={filteredLeads} canDelete={canDelete} canEdit={true} onDelete={handleDelete} onEdit={handleEdit} />
@@ -99,6 +97,27 @@ const LeadsPage = ({ params }: { params: { teamId: string } }) => {
                     <p>No leads found.</p>
                 )
             })()}
+            <Modal isOpen={isEditOpen} title="Edit Lead" onClose={() => setIsEditOpen(false)}>
+                {editing && (
+                    <LeadForm
+                        initialValues={{
+                            firstName: editing.firstName,
+                            lastName: editing.lastName,
+                            email: editing.email,
+                            phone: editing.phone ?? '',
+                            status: editing.status,
+                        }}
+                        submitLabel="Update Lead"
+                        onSubmit={async (vals) => {
+                            const { data } = await apiClient.patch<Lead>('/leads', { id: editing.id, ...vals })
+                            setLeads(prev => prev.map(l => l.id === editing.id ? data : l))
+                            setFilteredLeads(prev => prev.map(l => l.id === editing.id ? data : l))
+                            setIsEditOpen(false)
+                            setEditing(null)
+                        }}
+                    />
+                )}
+            </Modal>
         </div>
     )
 }

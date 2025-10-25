@@ -5,6 +5,8 @@ import { useState } from 'react';
 interface TaskCreateFormProps {
     teamId: string; // ID of the team this task belongs to
     onSubmit: (taskData: TaskFormValues) => void; // Callback to handle form submission
+    initialValues?: TaskFormValues
+    submitLabel?: string
 }
 
 export interface TaskFormValues {
@@ -16,12 +18,12 @@ export interface TaskFormValues {
     teamId: string; // The ID of the team the task belongs to
 }
 
-export default function TaskCreateForm({ teamId, onSubmit }: TaskCreateFormProps) {
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
-    const [dueDate, setDueDate] = useState('');
-    const [status, setStatus] = useState<'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'OVERDUE'>('PENDING');
-    const [priority, setPriority] = useState<'HIGH' | 'MEDIUM' | 'LOW'>('MEDIUM');
+export default function TaskCreateForm({ teamId, onSubmit, initialValues, submitLabel = 'Create Task' }: TaskCreateFormProps) {
+    const [title, setTitle] = useState(initialValues?.title ?? '');
+    const [description, setDescription] = useState(initialValues?.description ?? '');
+    const [dueDate, setDueDate] = useState(initialValues?.dueDate ? new Date(initialValues.dueDate).toISOString().slice(0, 10) : '');
+    const [status, setStatus] = useState<'PENDING' | 'IN_PROGRESS' | 'COMPLETED' | 'OVERDUE'>(initialValues?.status ?? 'PENDING');
+    const [priority, setPriority] = useState<'HIGH' | 'MEDIUM' | 'LOW'>(initialValues?.priority ?? 'MEDIUM');
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -52,7 +54,7 @@ export default function TaskCreateForm({ teamId, onSubmit }: TaskCreateFormProps
 
     return (
         <form onSubmit={handleSubmit} className="bg-white p-6 rounded-md shadow-md w-full max-w-md">
-            <h2 className="text-xl font-bold mb-4">Create Task</h2>
+            <h2 className="text-xl font-bold mb-4">{submitLabel}</h2>
             <div className="mb-4">
                 <label htmlFor="title" className="block text-sm font-medium mb-1">
                     Title
@@ -126,7 +128,7 @@ export default function TaskCreateForm({ teamId, onSubmit }: TaskCreateFormProps
                 type="submit"
                 className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
             >
-                Create Task
+                {submitLabel}
             </button>
         </form>
     )

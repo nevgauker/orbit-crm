@@ -3,10 +3,12 @@ import ActivityLoader from "@/components/activity_loader";
 import { SearchBar } from "@/components/search_bar";
 import { OpportunitiesTable } from "@/components/tables/opportunities_table";
 import apiClient from "@/utils/api_client";
-import { Opportunity, Role } from "@prisma/client";
+import { Lead, Opportunity, Role } from "@prisma/client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useAuth } from "@/contexts/auth_context";
+import Modal from "@/components/popups/modal";
+import OpportunityCreateForm, { OpportunityFormValues } from "@/components/forms/opportunity_form";
 
 const OpportunitiesPage = ({ params }: { params: { teamId: string } }) => {
     const { teamId } = params
@@ -15,22 +17,27 @@ const OpportunitiesPage = ({ params }: { params: { teamId: string } }) => {
     const [search, setSearch] = useState('')
     const [loading, setLoading] = useState(true)
     const { user } = useAuth()
+    const [isEditOpen, setIsEditOpen] = useState(false)
+    const [editing, setEditing] = useState<Opportunity | null>(null)
+    const [leads, setLeads] = useState<Lead[]>([])
 
     useEffect(() => {
-        // Fetch all contacts when the component loads
-        const fetchOpportunities = async () => {
+        const fetchAll = async () => {
             try {
-                const response = await apiClient.get(`/opportunities?teamId=${teamId}`)
-                setOpportunities(response.data);
-                setFilteredOpportunities(response.data); // Initialize filtered contacts with all data
+                const [oppRes, leadsRes] = await Promise.all([
+                    apiClient.get(`/opportunities?teamId=${teamId}`),
+                    apiClient.get(`/leads?teamId=${teamId}`),
+                ])
+                setOpportunities(oppRes.data)
+                setFilteredOpportunities(oppRes.data)
+                setLeads(leadsRes.data)
             } catch (error) {
-                console.error('Error fetching opportunities:', error)
+                console.error('Error fetching opportunities/leads:', error)
             } finally {
                 setLoading(false)
             }
-        };
-
-        fetchOpportunities();
+        }
+        fetchAll()
     }, [teamId])
 
     const handleSearch = () => {
@@ -81,15 +88,9 @@ const OpportunitiesPage = ({ params }: { params: { teamId: string } }) => {
                     setOpportunities(prev => prev.filter(o => o.id !== id))
                     setFilteredOpportunities(prev => prev.filter(o => o.id !== id))
                 }
-                const handleEdit = async (op: Opportunity) => {
-                    const title = prompt('Title', op.title) ?? op.title
-                    const description = prompt('Description', op.description ?? '') || undefined
-                    const valueStr = prompt('Value', String(op.value)) ?? String(op.value)
-                    const value = Number(valueStr) || op.value
-                    const status = prompt('Status (OPEN, IN_PROGRESS, WON, LOST)', op.status) as any ?? op.status
-                    const { data } = await apiClient.patch<Opportunity>('/opportunities', { id: op.id, title, description, value, status })
-                    setOpportunities(prev => prev.map(o => o.id === op.id ? data : o))
-                    setFilteredOpportunities(prev => prev.map(o => o.id === op.id ? data : o))
+                const handleEdit = (op: Opportunity) => {
+                    setEditing(op)
+                    setIsEditOpen(true)
                 }
                 return opportunities.length > 0 ? (
                     <OpportunitiesTable opportunities={filteredOpportunities} canDelete={canDelete} canEdit={true} onDelete={handleDelete} onEdit={handleEdit} />
@@ -97,6 +98,30 @@ const OpportunitiesPage = ({ params }: { params: { teamId: string } }) => {
                     <p>No opportunities found.</p>
                 )
             })()}
+            <Modal isOpen={isEditOpen} title="Edit Opportunity" onClose={() => setIsEditOpen(false)}>
+                {editing && (
+                    <OpportunityCreateForm
+                        leads={leads}
+                        teamId={teamId}
+                        initialValues={{
+                            title: editing.title,
+                            description: editing.description ?? '',
+                            value: editing.value,
+                            status: editing.status as any,
+                            leadId: (editing as any).leadId ?? '',
+                            teamId,
+                        }}
+                        submitLabel="Update Opportunity"
+                        onSubmit={async (vals: OpportunityFormValues) => {
+                            const { data } = await apiClient.patch<Opportunity>('/opportunities', { id: editing.id, ...vals })
+                            setOpportunities(prev => prev.map(o => o.id === editing.id ? data : o))
+                            setFilteredOpportunities(prev => prev.map(o => o.id === editing.id ? data : o))
+                            setIsEditOpen(false)
+                            setEditing(null)
+                        }}
+                    />
+                )}
+            </Modal>
         </div>
     );
 }
