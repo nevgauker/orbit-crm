@@ -3,12 +3,11 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import apiClient from '@/utils/api_client';
-import { ContactsTable } from '@/components/tables/contacts_table';
+import ContactsDataTable from '@/components/tables/contacts_datatable';
 import { Contact, Role } from '@prisma/client';
 import { useAuth } from '@/contexts/auth_context';
 import Modal from '@/components/popups/modal';
 import { ContactForm } from '@/components/forms/contact_form';
-import { SearchBar } from '@/components/search_bar';
 import ActivityLoader from '@/components/activity_loader';
 
 // interface Contact {
@@ -23,7 +22,6 @@ import ActivityLoader from '@/components/activity_loader';
 const ContactsPage = ({ params }: { params: { teamId: string } }) => {
     const [contacts, setContacts] = useState<Contact[]>([])
     const [filteredContacts, setFilteredContacts] = useState<Contact[]>([])
-    const [search, setSearch] = useState('')
     const { teamId } = params
     const { user } = useAuth()
     const [loading, setLoading] = useState(true)
@@ -36,7 +34,7 @@ const ContactsPage = ({ params }: { params: { teamId: string } }) => {
             try {
                 const response = await apiClient.get(`/contacts?teamId=${teamId}`)
                 setContacts(response.data);
-                setFilteredContacts(response.data); // Initialize filtered contacts with all data
+                setFilteredContacts(response.data);
             } catch (error) {
                 console.error('Error fetching contacts:', error)
             } finally {
@@ -47,22 +45,7 @@ const ContactsPage = ({ params }: { params: { teamId: string } }) => {
         fetchContacts();
     }, [teamId]);
 
-    const handleSearch = () => {
-        const filtered = contacts.filter(
-            (contact) =>
-                contact.firstName.toLowerCase().includes(search.toLowerCase()) ||
-                contact.lastName.toLowerCase().includes(search.toLowerCase()) ||
-                contact.email.toLowerCase().includes(search.toLowerCase()) ||
-                (contact.phone && contact.phone.toLowerCase().includes(search.toLowerCase())) ||
-                (contact.company && contact.company.toLowerCase().includes(search.toLowerCase()))
-        )
-        setFilteredContacts(filtered);
-    }
-
-    const handleClear = () => {
-        setSearch('');
-        setFilteredContacts(contacts); // Reset to all data
-    }
+    // DataTable handles search/filter internally; keep filteredContacts in sync with source
 
     return (
         <div className="p-6">
@@ -81,13 +64,6 @@ const ContactsPage = ({ params }: { params: { teamId: string } }) => {
                     Create Contact
                 </Link>
             </div>
-            <SearchBar
-                search={search}
-                placeholder='Search by name, email, phone, or company...'
-                setSearch={setSearch}
-                handleSearch={handleSearch}
-                handleClear={handleClear}
-            />
             {(() => {
                 if (loading) return <ActivityLoader />
                 const role = user?.roles.find(r => r.teamId === teamId)?.role
@@ -102,10 +78,14 @@ const ContactsPage = ({ params }: { params: { teamId: string } }) => {
                     setEditing(contact)
                     setIsEditOpen(true)
                 }
-                return filteredContacts.length > 0 ? (
-                    <ContactsTable contacts={filteredContacts} canDelete={canDelete} canEdit={true} onDelete={handleDelete} onEdit={handleEdit} />
-                ) : (
-                    <p>No contacts found.</p>
+                return (
+                    <ContactsDataTable
+                        data={filteredContacts}
+                        canDelete={canDelete}
+                        canEdit={true}
+                        onDelete={handleDelete}
+                        onEdit={handleEdit}
+                    />
                 )
             })()}
             <Modal isOpen={isEditOpen} title="Edit Contact" onClose={() => setIsEditOpen(false)}>
