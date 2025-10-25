@@ -39,13 +39,12 @@ const CreateTaskPage = ({ params }: { params: { teamId: string } }) => {
 
     return (
         <div className="p-6">
-            {loading ? <ActivityLoader /> :
+            {loading ? <ActivityLoader /> : (
                 <>
-                    <h1 className="text-2xl font-bold mb-6">Create Contact</h1>
+                    <h1 className="text-2xl font-bold mb-6">Create Task</h1>
                     <TaskCreateForm onSubmit={handleContactSubmit} teamId={teamId} />
-
                 </>
-            }
+            )}
         </div>
     )
 };

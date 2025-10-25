@@ -57,13 +57,12 @@ const CreateOpportunityPage = ({ params }: { params: { teamId: string } }) => {
 
     return (
         <div className="p-6">
-            {loading ? <ActivityLoader /> :
+            {loading ? <ActivityLoader /> : (
                 <>
-                    <h1 className="text-2xl font-bold mb-6">Create Contact</h1>
+                    <h1 className="text-2xl font-bold mb-6">Create Opportunity</h1>
                     <OpportunityCreateForm onSubmit={handleContactSubmit} teamId={teamId} leads={leads} />
-
                 </>
-            }
+            )}
         </div>
     )
 };

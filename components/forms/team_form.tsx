@@ -24,11 +24,12 @@ export default function TeamCreationForm({ onTeamCreated }: TeamCreationFormProp
 
     try {
       const response = await axios.post("/api/teams", { name, description });
-      if (response.status === 200) {
+      if (response.status === 201 || response.status === 200) {
         setName("");
         setDescription("");
         if (onTeamCreated) {
-          onTeamCreated(response.data.teamId);
+          const createdId = response.data?.id ?? response.data?.teamId;
+          if (createdId) onTeamCreated(createdId);
         }
         alert("Team created successfully!");
       }

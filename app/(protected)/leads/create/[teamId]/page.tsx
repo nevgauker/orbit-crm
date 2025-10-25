@@ -1,5 +1,5 @@
 'use client'
-import { LeadForm, LeadFormValues } from '@/components/forms/lead_rom'
+import { LeadForm, LeadFormValues } from '@/components/forms/lead_form'
 import { useAuth } from '@/contexts/auth_context'
 import apiClient from '@/utils/api_client'
 import { useRouter } from 'next/navigation'

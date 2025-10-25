@@ -24,7 +24,7 @@ export async function POST(req: NextRequest) {
 
             return NextResponse.json({
                 message: "User added to the team.",
-                redirectUrl: `/dashboard?teamId=${teamId}`,
+                redirectUrl: `/dashboard/${teamId}`,
             });
         } else {
             // User does not exist: Redirect to sign-up with callback

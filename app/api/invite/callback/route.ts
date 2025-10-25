@@ -28,7 +28,7 @@ export async function GET(req: NextRequest) {
             role: role as Role, // Ensure the role value is a valid `Role` enum
         });
 
-        return NextResponse.redirect(`/dashboard?teamId=${teamId}`);
+        return NextResponse.redirect(`/dashboard/${teamId}`);
     } catch (error) {
         // Use a more specific type for error handling
         if (error instanceof Error) {

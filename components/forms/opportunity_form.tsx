@@ -108,8 +108,9 @@ export default function OpportunityCreateForm({
                     className="w-full px-4 py-2 border rounded-md"
                 >
                     <option value="OPEN">Open</option>
-                    <option value="CLOSED_WON">Closed Won</option>
-                    <option value="CLOSED_LOST">Closed Lost</option>
+                    <option value="IN_PROGRESS">In Progress</option>
+                    <option value="WON">Won</option>
+                    <option value="LOST">Lost</option>
                 </select>
             </div>
             <div className="mb-4">

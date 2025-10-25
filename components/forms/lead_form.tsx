@@ -77,4 +77,3 @@ export const LeadForm = ({ onSubmit }: LeadFormProps) => {
     );
 };
 
-

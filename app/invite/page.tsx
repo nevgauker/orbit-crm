@@ -32,7 +32,12 @@ const InvitePage = () => {
                 });
 
                 if (response.status === 200) {
-                    router.push("/dashboard"); // Redirect to the dashboard
+                    const redirectUrl = response.data?.redirectUrl
+                    if (redirectUrl) {
+                        router.push(redirectUrl)
+                    } else {
+                        setError("Invalid invite response.")
+                    }
                 } else {
                     setError("Failed to process the invite.");
                 }

@@ -13,14 +13,13 @@ export async function GET(req: Request) {
 
     try {
         // Verify the token and extract the payload (e.g., userId)
-        const decoded = verifyToken(token);
-        if (!decoded || !(await decoded).userId) {
+        const decoded = await verifyToken(token);
+        if (!decoded.userId) {
             throw new Error("Invalid token");
         }
 
         // Fetch the user from the database
-
-        const userResult = await getUserById((await decoded).userId)
+        const userResult = await getUserById(decoded.userId)
 
         if (!userResult) {
             throw new Error("User not found");

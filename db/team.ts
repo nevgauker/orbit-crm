@@ -1,4 +1,3 @@
-import { Role } from '@prisma/client';
 import db from "@/db/db";
 
 export const createTeam = async ({ name, ownerId }: { name: string, ownerId: string }) => {
@@ -8,19 +7,5 @@ export const createTeam = async ({ name, ownerId }: { name: string, ownerId: str
 };
 
 export const getTeamById = async (id: string) => {
-
-    const teams = await db.team.findMany()
-
-    const users = await db.user.findMany({
-        include: {
-            roles: {
-                include: {
-                    team: true,
-                }
-            }
-        }
-    })
-
-    const team = await db.team.findUnique({ where: { id } })
-    return team
+    return db.team.findUnique({ where: { id } })
 }
