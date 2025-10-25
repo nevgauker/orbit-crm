@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { verifyToken } from "@/utils/auth";
 import db from "@/db/db";
+import { Role } from "@prisma/client";
 
 export async function getAuthUserId(req: Request): Promise<string> {
   const authHeader = req.headers.get("Authorization") || req.headers.get("authorization");
@@ -42,3 +43,13 @@ export async function assertTeamMembership(userId: string, teamId: string) {
   return membership;
 }
 
+export async function assertTeamRole(userId: string, teamId: string, allowed: Role[]) {
+  const membership = await db.teamRole.findFirst({ where: { userId, teamId } });
+  if (!membership || !allowed.includes(membership.role)) {
+    throw new Response(JSON.stringify({ error: "Forbidden" }), {
+      status: 403,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+  return membership;
+}

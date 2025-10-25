@@ -1,6 +1,7 @@
 import { createTask, getTasksByTeam } from "@/db/task";
 import { NextResponse } from "next/server";
-import { assertTeamMembership, getAuthUserId } from "@/utils/authorization";
+import { assertTeamMembership, assertTeamRole, getAuthUserId } from "@/utils/authorization";
+import { Role } from "@prisma/client";
 import { z } from "zod";
 import db from "@/db/db";
 import { updateTask, deleteTask } from "@/db/task";
@@ -69,7 +70,7 @@ export async function DELETE(req: Request) {
         const { id } = taskDeleteSchema.parse(json)
         const existing = await db.task.findUnique({ where: { id } })
         if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-        await assertTeamMembership(userId, existing.teamId)
+        await assertTeamRole(userId, existing.teamId, [Role.ADMIN, Role.OWNER])
         await deleteTask(id)
         return NextResponse.json({ success: true })
     } catch (error) {

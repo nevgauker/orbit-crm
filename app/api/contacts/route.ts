@@ -1,7 +1,8 @@
 
 import { createContact, getContactsByTeam } from '@/db/contact'
 import { NextResponse } from 'next/server'
-import { assertTeamMembership, getAuthUserId } from '@/utils/authorization'
+import { assertTeamMembership, assertTeamRole, getAuthUserId } from '@/utils/authorization'
+import { Role } from '@prisma/client'
 import { z } from 'zod'
 import db from '@/db/db'
 import { updateContact, deleteContact } from '@/db/contact'
@@ -88,7 +89,7 @@ export async function DELETE(req: Request) {
         const { id } = contactDeleteSchema.parse(json)
         const existing = await db.contact.findUnique({ where: { id } })
         if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-        await assertTeamMembership(userId, existing.teamId)
+        await assertTeamRole(userId, existing.teamId, [Role.ADMIN, Role.OWNER])
         await deleteContact(id)
         return NextResponse.json({ success: true })
     } catch (error) {

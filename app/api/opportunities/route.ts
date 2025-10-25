@@ -1,6 +1,7 @@
 import { createOpportunity, getOpportunitiesByTeam } from "@/db/opportunity";
 import { NextResponse } from "next/server";
-import { assertTeamMembership, getAuthUserId } from "@/utils/authorization";
+import { assertTeamMembership, assertTeamRole, getAuthUserId } from "@/utils/authorization";
+import { Role } from "@prisma/client";
 import { z } from "zod";
 import db from "@/db/db";
 import { updateOpportunity, deleteOpportunity } from "@/db/opportunity";
@@ -69,7 +70,7 @@ export async function DELETE(req: Request) {
         const { id } = opportunityDeleteSchema.parse(json)
         const existing = await db.opportunity.findUnique({ where: { id } })
         if (!existing) return NextResponse.json({ error: 'Not found' }, { status: 404 })
-        await assertTeamMembership(userId, existing.teamId)
+        await assertTeamRole(userId, existing.teamId, [Role.ADMIN, Role.OWNER])
         await deleteOpportunity(id)
         return NextResponse.json({ success: true })
     } catch (error) {
