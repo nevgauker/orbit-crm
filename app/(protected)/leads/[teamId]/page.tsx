@@ -1,7 +1,6 @@
 'use client'
 import ActivityLoader from "@/components/activity_loader";
-import { SearchBar } from "@/components/search_bar";
-import { LeadsTable } from "@/components/tables/leads_table";
+import LeadsDataTable from "@/components/tables/leads_datatable";
 import apiClient from "@/utils/api_client";
 import { Lead, Role } from "@prisma/client";
 import { useAuth } from "@/contexts/auth_context";
@@ -14,7 +13,6 @@ const LeadsPage = ({ params }: { params: { teamId: string } }) => {
     const { teamId } = params
     const [leads, setLeads] = useState<Lead[]>([])
     const [filteredLeads, setFilteredLeads] = useState<Lead[]>([])
-    const [search, setSearch] = useState('')
     const [loading, setLoading] = useState(true)
     const [isEditOpen, setIsEditOpen] = useState(false)
     const [editing, setEditing] = useState<Lead | null>(null)
@@ -70,13 +68,6 @@ const LeadsPage = ({ params }: { params: { teamId: string } }) => {
                     Create Lead
                 </Link>
             </div>
-            <SearchBar
-                search={search}
-                placeholder='Search by first name, last name, email, or phone...'
-                setSearch={setSearch}
-                handleSearch={handleSearch}
-                handleClear={handleClear}
-            />
             {(() => {
                 if (loading) return <ActivityLoader />
                 const role = user?.roles.find(r => r.teamId === teamId)?.role
@@ -91,10 +82,8 @@ const LeadsPage = ({ params }: { params: { teamId: string } }) => {
                     setEditing(lead)
                     setIsEditOpen(true)
                 }
-                return leads.length > 0 ? (
-                    <LeadsTable leads={filteredLeads} canDelete={canDelete} canEdit={true} onDelete={handleDelete} onEdit={handleEdit} />
-                ) : (
-                    <p>No leads found.</p>
+                return (
+                    <LeadsDataTable data={filteredLeads} canDelete={canDelete} canEdit={true} onDelete={handleDelete} onEdit={handleEdit} />
                 )
             })()}
             <Modal isOpen={isEditOpen} title="Edit Lead" onClose={() => setIsEditOpen(false)}>
