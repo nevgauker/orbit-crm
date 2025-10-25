@@ -4,7 +4,8 @@ import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import apiClient from '@/utils/api_client';
 import { ContactsTable } from '@/components/tables/contacts_table';
-import { Contact } from '@prisma/client';
+import { Contact, Role } from '@prisma/client';
+import { useAuth } from '@/contexts/auth_context';
 import { SearchBar } from '@/components/search_bar';
 import ActivityLoader from '@/components/activity_loader';
 
@@ -22,6 +23,7 @@ const ContactsPage = ({ params }: { params: { teamId: string } }) => {
     const [filteredContacts, setFilteredContacts] = useState<Contact[]>([])
     const [search, setSearch] = useState('')
     const { teamId } = params
+    const { user } = useAuth()
     const [loading, setLoading] = useState(true)
 
     useEffect(() => {
@@ -37,7 +39,7 @@ const ContactsPage = ({ params }: { params: { teamId: string } }) => {
                 setLoading(false)
             }
         };
-
+            
         fetchContacts();
     }, [teamId]);
 
@@ -82,15 +84,32 @@ const ContactsPage = ({ params }: { params: { teamId: string } }) => {
                 handleSearch={handleSearch}
                 handleClear={handleClear}
             />
-            {
-                loading ? <ActivityLoader /> : (
-                    filteredContacts.length > 0 ? (
-                        <ContactsTable contacts={filteredContacts} />
-                    ) : (
-                        <p>No contacts found.</p>
-                    )
+            {(() => {
+                if (loading) return <ActivityLoader />
+                const role = user?.roles.find(r => r.teamId === teamId)?.role
+                const canDelete = role === Role.ADMIN || role === Role.OWNER
+                const handleDelete = async (id: string) => {
+                    if (!confirm('Delete this contact?')) return
+                    await apiClient.delete('/contacts', { data: { id } })
+                    setContacts(prev => prev.filter(c => c.id !== id))
+                    setFilteredContacts(prev => prev.filter(c => c.id !== id))
+                }
+                const handleEdit = async (contact: Contact) => {
+                    const firstName = prompt('First name', contact.firstName) ?? contact.firstName
+                    const lastName = prompt('Last name', contact.lastName) ?? contact.lastName
+                    const email = prompt('Email', contact.email) ?? contact.email
+                    const phone = prompt('Phone', contact.phone ?? '') || undefined
+                    const company = prompt('Company', contact.company ?? '') || undefined
+                    const { data } = await apiClient.patch<Contact>('/contacts', { id: contact.id, firstName, lastName, email, phone, company })
+                    setContacts(prev => prev.map(c => c.id === contact.id ? data : c))
+                    setFilteredContacts(prev => prev.map(c => c.id === contact.id ? data : c))
+                }
+                return filteredContacts.length > 0 ? (
+                    <ContactsTable contacts={filteredContacts} canDelete={canDelete} canEdit={true} onDelete={handleDelete} onEdit={handleEdit} />
+                ) : (
+                    <p>No contacts found.</p>
                 )
-            }
+            })()}
         </div>
     )
 }

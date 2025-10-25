@@ -3,9 +3,10 @@ import ActivityLoader from "@/components/activity_loader";
 import { SearchBar } from "@/components/search_bar";
 import { TasksTable } from "@/components/tables/tasks_table";
 import apiClient from "@/utils/api_client";
-import { Task } from "@prisma/client";
+import { Role, Task } from "@prisma/client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/auth_context";
 
 
 const TasksPage = ({ params }: { params: { teamId: string } }) => {
@@ -15,6 +16,7 @@ const TasksPage = ({ params }: { params: { teamId: string } }) => {
     const [filteredTasks, setFilteredTasks] = useState<Task[]>([])
     const [search, setSearch] = useState('')
     const [loading, setLoading] = useState(true)
+    const { user } = useAuth()
 
 
     useEffect(() => {
@@ -73,15 +75,32 @@ const TasksPage = ({ params }: { params: { teamId: string } }) => {
                 handleClear={handleClear}
             />
             <div className="bg-white p-4 shadow rounded-md">
-                {
-                    loading ? <ActivityLoader /> : (
-                        filteredTasks.length > 0 ? (
-                            <TasksTable tasks={filteredTasks} />
-                        ) : (
-                            <p>No tasks found.</p>
-                        )
+                {(() => {
+                    if (loading) return <ActivityLoader />
+                    const role = user?.roles.find(r => r.teamId === teamId)?.role
+                    const canDelete = role === Role.ADMIN || role === Role.OWNER
+                    const handleDelete = async (id: string) => {
+                        if (!confirm('Delete this task?')) return
+                        await apiClient.delete('/tasks', { data: { id } })
+                        setTasks(prev => prev.filter(t => t.id !== id))
+                        setFilteredTasks(prev => prev.filter(t => t.id !== id))
+                    }
+                    const handleEdit = async (task: Task) => {
+                        const title = prompt('Title', task.title) ?? task.title
+                        const description = prompt('Description', task.description ?? '') || undefined
+                        const dueDate = prompt('Due date (YYYY-MM-DD)', task.dueDate ? String(task.dueDate).slice(0, 10) : '') || undefined
+                        const status = prompt('Status (PENDING, IN_PROGRESS, COMPLETED, OVERDUE)', task.status) as any ?? task.status
+                        const priority = prompt('Priority (HIGH, MEDIUM, LOW)', task.priority) as any ?? task.priority
+                        const { data } = await apiClient.patch<Task>('/tasks', { id: task.id, title, description, dueDate, status, priority })
+                        setTasks(prev => prev.map(t => t.id === task.id ? data : t))
+                        setFilteredTasks(prev => prev.map(t => t.id === task.id ? data : t))
+                    }
+                    return filteredTasks.length > 0 ? (
+                        <TasksTable tasks={filteredTasks} canDelete={canDelete} canEdit={true} onDelete={handleDelete} onEdit={handleEdit} />
+                    ) : (
+                        <p>No tasks found.</p>
                     )
-                }
+                })()}
             </div>
         </div>
     );

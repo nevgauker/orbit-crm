@@ -1,8 +1,20 @@
-// import { dummyTasks } from '@/data/tasks';
+"use client";
 import { Task, TaskPriority, TaskStatus } from '@prisma/client';
 import { format } from 'date-fns';
 
-export function TasksTable({ tasks }: { tasks: Task[] }) {
+export function TasksTable({
+    tasks,
+    canEdit = true,
+    canDelete = false,
+    onEdit,
+    onDelete,
+}: {
+    tasks: Task[]
+    canEdit?: boolean
+    canDelete?: boolean
+    onEdit?: (task: Task) => void
+    onDelete?: (id: string) => void
+}) {
     return (
         <div className="overflow-x-auto">
             <table className="min-w-full bg-white border border-gray-300 rounded-md">
@@ -13,7 +25,7 @@ export function TasksTable({ tasks }: { tasks: Task[] }) {
                         <th className="text-left px-6 py-3 text-sm font-medium text-gray-700 border-b">Due Date</th>
                         <th className="text-left px-6 py-3 text-sm font-medium text-gray-700 border-b">Priority</th>
                         <th className="text-left px-6 py-3 text-sm font-medium text-gray-700 border-b">Status</th>
-                        <th className="px-6 py-3 border-b"></th>
+                        <th className="text-left px-6 py-3 text-sm font-medium text-gray-700 border-b">Actions</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -42,8 +54,13 @@ export function TasksTable({ tasks }: { tasks: Task[] }) {
                                     {task.status}
                                 </span>
                             </td>
-                            <td className="px-6 py-4 text-right">
-                                <button className="text-blue-600 hover:text-blue-800">Details</button>
+                            <td className="px-6 py-4 text-sm text-gray-800 space-x-2">
+                                {canEdit && (
+                                    <button className="text-blue-600 hover:text-blue-800" onClick={() => onEdit && onEdit(task)}>Edit</button>
+                                )}
+                                {canDelete && (
+                                    <button className="text-red-600 hover:text-red-800" onClick={() => onDelete && onDelete(task.id)}>Delete</button>
+                                )}
                             </td>
                         </tr>
                     ))}

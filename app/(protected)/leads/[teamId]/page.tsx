@@ -3,7 +3,8 @@ import ActivityLoader from "@/components/activity_loader";
 import { SearchBar } from "@/components/search_bar";
 import { LeadsTable } from "@/components/tables/leads_table";
 import apiClient from "@/utils/api_client";
-import { Lead } from "@prisma/client";
+import { Lead, Role } from "@prisma/client";
+import { useAuth } from "@/contexts/auth_context";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -13,6 +14,7 @@ const LeadsPage = ({ params }: { params: { teamId: string } }) => {
     const [filteredLeads, setFilteredLeads] = useState<Lead[]>([])
     const [search, setSearch] = useState('')
     const [loading, setLoading] = useState(true)
+    const { user } = useAuth()
 
 
     useEffect(() => {
@@ -71,9 +73,32 @@ const LeadsPage = ({ params }: { params: { teamId: string } }) => {
                 handleSearch={handleSearch}
                 handleClear={handleClear}
             />
-            {loading ? <ActivityLoader /> : (
-                leads.length > 0 ? <LeadsTable leads={filteredLeads} /> : <p>No leads found.</p>
-            )}
+            {(() => {
+                if (loading) return <ActivityLoader />
+                const role = user?.roles.find(r => r.teamId === teamId)?.role
+                const canDelete = role === Role.ADMIN || role === Role.OWNER
+                const handleDelete = async (id: string) => {
+                    if (!confirm('Delete this lead?')) return
+                    await apiClient.delete('/leads', { data: { id } })
+                    setLeads(prev => prev.filter(l => l.id !== id))
+                    setFilteredLeads(prev => prev.filter(l => l.id !== id))
+                }
+                const handleEdit = async (lead: Lead) => {
+                    const firstName = prompt('First name', lead.firstName) ?? lead.firstName
+                    const lastName = prompt('Last name', lead.lastName) ?? lead.lastName
+                    const email = prompt('Email', lead.email) ?? lead.email
+                    const phone = prompt('Phone', lead.phone ?? '') || undefined
+                    const status = prompt('Status (NEW, CONTACTED, QUALIFIED, LOST)', lead.status) as any ?? lead.status
+                    const { data } = await apiClient.patch<Lead>('/leads', { id: lead.id, firstName, lastName, email, phone, status })
+                    setLeads(prev => prev.map(l => l.id === lead.id ? data : l))
+                    setFilteredLeads(prev => prev.map(l => l.id === lead.id ? data : l))
+                }
+                return leads.length > 0 ? (
+                    <LeadsTable leads={filteredLeads} canDelete={canDelete} canEdit={true} onDelete={handleDelete} onEdit={handleEdit} />
+                ) : (
+                    <p>No leads found.</p>
+                )
+            })()}
         </div>
     )
 }

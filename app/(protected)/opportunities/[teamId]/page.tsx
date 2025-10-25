@@ -3,9 +3,10 @@ import ActivityLoader from "@/components/activity_loader";
 import { SearchBar } from "@/components/search_bar";
 import { OpportunitiesTable } from "@/components/tables/opportunities_table";
 import apiClient from "@/utils/api_client";
-import { Opportunity } from "@prisma/client";
+import { Opportunity, Role } from "@prisma/client";
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useAuth } from "@/contexts/auth_context";
 
 const OpportunitiesPage = ({ params }: { params: { teamId: string } }) => {
     const { teamId } = params
@@ -13,6 +14,7 @@ const OpportunitiesPage = ({ params }: { params: { teamId: string } }) => {
     const [filteredOpportunities, setFilteredOpportunities] = useState<Opportunity[]>([])
     const [search, setSearch] = useState('')
     const [loading, setLoading] = useState(true)
+    const { user } = useAuth()
 
     useEffect(() => {
         // Fetch all contacts when the component loads
@@ -69,13 +71,32 @@ const OpportunitiesPage = ({ params }: { params: { teamId: string } }) => {
                 handleSearch={handleSearch}
                 handleClear={handleClear}
             />
-            {
-                loading ? <ActivityLoader /> : (
-                    opportunities.length > 0 ? <OpportunitiesTable opportunities={filteredOpportunities} />
-                        : <p>No opportunities found.</p>
-
+            {(() => {
+                if (loading) return <ActivityLoader />
+                const role = user?.roles.find(r => r.teamId === teamId)?.role
+                const canDelete = role === Role.ADMIN || role === Role.OWNER
+                const handleDelete = async (id: string) => {
+                    if (!confirm('Delete this opportunity?')) return
+                    await apiClient.delete('/opportunities', { data: { id } })
+                    setOpportunities(prev => prev.filter(o => o.id !== id))
+                    setFilteredOpportunities(prev => prev.filter(o => o.id !== id))
+                }
+                const handleEdit = async (op: Opportunity) => {
+                    const title = prompt('Title', op.title) ?? op.title
+                    const description = prompt('Description', op.description ?? '') || undefined
+                    const valueStr = prompt('Value', String(op.value)) ?? String(op.value)
+                    const value = Number(valueStr) || op.value
+                    const status = prompt('Status (OPEN, IN_PROGRESS, WON, LOST)', op.status) as any ?? op.status
+                    const { data } = await apiClient.patch<Opportunity>('/opportunities', { id: op.id, title, description, value, status })
+                    setOpportunities(prev => prev.map(o => o.id === op.id ? data : o))
+                    setFilteredOpportunities(prev => prev.map(o => o.id === op.id ? data : o))
+                }
+                return opportunities.length > 0 ? (
+                    <OpportunitiesTable opportunities={filteredOpportunities} canDelete={canDelete} canEdit={true} onDelete={handleDelete} onEdit={handleEdit} />
+                ) : (
+                    <p>No opportunities found.</p>
                 )
-            }
+            })()}
         </div>
     );
 }
