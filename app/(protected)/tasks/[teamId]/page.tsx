@@ -1,7 +1,6 @@
 'use client'
 import ActivityLoader from "@/components/activity_loader";
-import { SearchBar } from "@/components/search_bar";
-import { TasksTable } from "@/components/tables/tasks_table";
+import TasksDataTable from "@/components/tables/tasks_datatable";
 import apiClient from "@/utils/api_client";
 import { Role, Task } from "@prisma/client";
 import Link from "next/link";
@@ -40,19 +39,7 @@ const TasksPage = ({ params }: { params: { teamId: string } }) => {
         fetchTasks();
     }, [teamId]);
 
-    const handleSearch = () => {
-        const filtered = tasks.filter(
-            (task) =>
-                task.title.toLowerCase().includes(search.toLowerCase()) ||
-                (task.description && task.description.toLowerCase().includes(search.toLowerCase()))
-        )
-        setFilteredTasks(filtered);
-    }
-
-    const handleClear = () => {
-        setSearch('');
-        setFilteredTasks(tasks); // Reset to all data
-    }
+    // DataTable handles filtering; keep filteredTasks in sync with source
 
     return (
         <div className="p-6">
@@ -71,13 +58,6 @@ const TasksPage = ({ params }: { params: { teamId: string } }) => {
                     Create Task
                 </Link>
             </div>
-            <SearchBar
-                search={search}
-                placeholder='Search by first name, last name, email, or phone...'
-                setSearch={setSearch}
-                handleSearch={handleSearch}
-                handleClear={handleClear}
-            />
             <div className="bg-white p-4 shadow rounded-md">
                 {(() => {
                     if (loading) return <ActivityLoader />
@@ -93,10 +73,14 @@ const TasksPage = ({ params }: { params: { teamId: string } }) => {
                         setEditing(task)
                         setIsEditOpen(true)
                     }
-                    return filteredTasks.length > 0 ? (
-                        <TasksTable tasks={filteredTasks} canDelete={canDelete} canEdit={true} onDelete={handleDelete} onEdit={handleEdit} />
-                    ) : (
-                        <p>No tasks found.</p>
+                    return (
+                        <TasksDataTable
+                            data={filteredTasks}
+                            canDelete={canDelete}
+                            canEdit={true}
+                            onDelete={handleDelete}
+                            onEdit={handleEdit}
+                        />
                     )
                 })()}
             </div>
