@@ -6,8 +6,9 @@ import { getLimits, isWithinLimit } from "@/utils/limits";
 import jwt from "jsonwebtoken";
 import { Role } from "@prisma/client";
 import { z } from "zod";
+import { requireEnv } from "@/utils/env";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
+const JWT_SECRET = requireEnv("JWT_SECRET");
 
 export async function POST(req: NextRequest) {
     try {

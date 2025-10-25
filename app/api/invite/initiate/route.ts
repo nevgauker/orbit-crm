@@ -5,6 +5,7 @@ import db from "@/db/db";
 import { getAuthUserId, assertTeamMembership } from "@/utils/authorization";
 import { getLimits, isWithinLimit } from "@/utils/limits";
 import jwt from "jsonwebtoken";
+import { requireEnv } from "@/utils/env";
 
 const schema = z.object({
   email: z.string().email(),
@@ -12,7 +13,7 @@ const schema = z.object({
   role: z.nativeEnum(Role),
 });
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
+const JWT_SECRET = requireEnv("JWT_SECRET");
 
 export async function POST(req: NextRequest) {
   try {
@@ -51,4 +52,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
   }
 }
-

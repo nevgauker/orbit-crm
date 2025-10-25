@@ -1,9 +1,10 @@
 import { NextResponse } from "next/server";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken"
+import { requireEnv } from "@/utils/env";
 import db from "@/db/db";
 
-const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key"; // Use a strong secret in production
+const JWT_SECRET = requireEnv("JWT_SECRET"); // Strong secret required
 
 export async function POST(req: Request) {
     try {
