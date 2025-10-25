@@ -1,16 +1,30 @@
 import { createLead, getLeadsByTeam } from '@/db/lead';
 import { NextResponse } from 'next/server';
 import { assertTeamMembership, getAuthUserId } from '@/utils/authorization'
+import { z } from 'zod'
+
+const leadSchema = z.object({
+    firstName: z.string().min(1),
+    lastName: z.string().min(1),
+    email: z.string().email(),
+    phone: z.string().optional(),
+    status: z.enum(['NEW', 'CONTACTED', 'QUALIFIED', 'LOST']).default('NEW'),
+    teamId: z.string().min(1),
+})
 
 export async function POST(req: Request) {
     try {
         const userId = await getAuthUserId(req)
-        const data = await req.json();
-        await assertTeamMembership(userId, data?.teamId)
+        const json = await req.json();
+        const data = leadSchema.parse(json)
+        await assertTeamMembership(userId, data.teamId)
         const newLead = await createLead(data)
         return NextResponse.json(newLead, { status: 201 });
     } catch (error) {
         if (error instanceof Response) return error
+        if (error instanceof z.ZodError) {
+            return NextResponse.json({ error: 'Invalid payload', details: error.errors }, { status: 400 })
+        }
         console.log(error)
         return NextResponse.json({ error: 'Failed to create lead' }, { status: 500 });
     }

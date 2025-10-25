@@ -3,7 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 // Public API routes that do not require auth
 const PUBLIC_API = [
   /^\/api\/auth\//,
-  /^\/api\/invite(\/.*)?$/,
+  /^\/api\/invite$/,
+  /^\/api\/invite\/callback$/,
   /^\/api\/dev$/,
 ];
 
@@ -38,4 +39,3 @@ export function middleware(req: NextRequest) {
 export const config = {
   matcher: "/api/:path*",
 };
-

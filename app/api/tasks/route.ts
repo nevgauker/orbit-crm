@@ -1,16 +1,30 @@
 import { createTask, getTasksByTeam } from "@/db/task";
 import { NextResponse } from "next/server";
 import { assertTeamMembership, getAuthUserId } from "@/utils/authorization";
+import { z } from "zod";
+
+const taskSchema = z.object({
+    title: z.string().min(1),
+    description: z.string().optional(),
+    dueDate: z.string().optional(),
+    status: z.enum(['PENDING', 'IN_PROGRESS', 'COMPLETED', 'OVERDUE']).default('PENDING'),
+    priority: z.enum(['HIGH', 'MEDIUM', 'LOW']).default('MEDIUM'),
+    teamId: z.string().min(1),
+})
 
 export async function POST(req: Request) {
     try {
         const userId = await getAuthUserId(req)
-        const data = await req.json();
-        await assertTeamMembership(userId, data?.teamId)
+        const json = await req.json();
+        const data = taskSchema.parse(json)
+        await assertTeamMembership(userId, data.teamId)
         const newTask = await createTask(data)
         return NextResponse.json(newTask, { status: 201 });
     } catch (error) {
         if (error instanceof Response) return error
+        if (error instanceof z.ZodError) {
+            return NextResponse.json({ error: 'Invalid payload', details: error.errors }, { status: 400 })
+        }
         console.log(error)
         return NextResponse.json({ error: 'Failed to create task' }, { status: 500 });
     }

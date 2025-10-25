@@ -2,6 +2,8 @@ import { createTeamRole } from "@/db/team_role";
 import { getUserByEmail } from "@/db/user";
 import { Role } from "@prisma/client";
 import { NextRequest, NextResponse } from "next/server";
+import db from "@/db/db";
+import { getLimits, isWithinLimit } from "@/utils/limits";
 
 export async function GET(req: NextRequest) {
     const url = new URL(req.url);
@@ -19,6 +21,15 @@ export async function GET(req: NextRequest) {
 
         if (!user) {
             return NextResponse.json({ message: "User not found after sign-up." }, { status: 400 });
+        }
+
+        // Enforce plan-based users-per-team limit
+        const team = await db.team.findUnique({ where: { id: teamId }, include: { owner: true } })
+        if (!team) return NextResponse.json({ message: "Team not found." }, { status: 404 })
+        const memberCount = await db.teamRole.count({ where: { teamId } })
+        const teamLimits = getLimits(team.owner.userType)
+        if (!isWithinLimit(memberCount, teamLimits.maxUsersPerTeam)) {
+            return NextResponse.json({ message: "Team member limit reached for this plan." }, { status: 403 })
         }
 
         // Add the user to the team

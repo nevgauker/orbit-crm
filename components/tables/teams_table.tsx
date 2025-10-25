@@ -4,7 +4,6 @@ import { Role, TeamRole } from "@prisma/client"
 import { useState } from "react";
 import InviteUserPopup from "../popups/invite_user_popup";
 import { useAuth } from "@/contexts/auth_context";
-import { generateInviteLink } from "@/actions/generate_invite_link";
 import axios from "axios";
 import apiClient from "@/utils/api_client";
 
@@ -25,28 +24,22 @@ export function TeamRolesTable() {
         console.log(`Inviting ${email} with role ${role}`);
 
         const teamId = selectedTeamRole.teamId
+        // Fetch team details (name)
+        const teamRes = await apiClient.get(`/teams?teamId=${teamId}`)
+        const team = teamRes.data
 
-        const response = await apiClient.get(`/teams?teamId=${teamId}`)
-        const team = response.data
+        // Ask server to initiate invite and return a signed link
+        const initRes = await apiClient.post(`/invite/initiate`, { email, teamId, role })
+        const inviteLink = initRes.data?.inviteLink
 
-        const inviteLink = await generateInviteLink(email, teamId, role, user?.name ?? '')
-        // const webhook = `${process.env.NEXT_PUBLIC_INVITE_WEBHOOK}?email=${encodeURIComponent(email)}
-        // &inviterName=${encodeURIComponent(user?.name || '')}
-        // &teamName=${encodeURIComponent(team.name)}&url=${encodeURIComponent(inviteLink)}`;
         const webhook = process.env.NEXT_PUBLIC_INVITE_WEBHOOK ?? ''
-
-
-        const res = await axios.post(webhook, {
+        await axios.post(webhook, {
             email,
             teamName: team.name,
             inviterName: user?.name,
             role,
-            url: inviteLink
-        },
-            {
-                headers: { 'Content-Type': 'application/json' }
-            })
-        console.log(res)
+            url: inviteLink,
+        }, { headers: { 'Content-Type': 'application/json' } })
     }
 
     if (!user) return <></>

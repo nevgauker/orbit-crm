@@ -20,16 +20,8 @@ const InvitePage = () => {
             }
 
             try {
-                const decodedData = atob(decodeURIComponent(token as string)); // Decode the token
-                const [email, teamId, role, inviterName] = decodedData.split(":");
-
-                // Send the invite data to the server for processing
-                const response = await axios.post("/api/invite", {
-                    email,
-                    teamId,
-                    role,
-                    inviterName,
-                });
+                // Send the signed invite token to the server for processing
+                const response = await axios.post("/api/invite", { token });
 
                 if (response.status === 200) {
                     const redirectUrl = response.data?.redirectUrl
