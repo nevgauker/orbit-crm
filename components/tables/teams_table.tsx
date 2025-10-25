@@ -5,6 +5,7 @@ import { useState } from "react";
 import InviteUserPopup from "../popups/invite_user_popup";
 import { useAuth } from "@/contexts/auth_context";
 import axios from "axios";
+import { toast } from "sonner";
 import apiClient from "@/utils/api_client";
 
 
@@ -29,8 +30,22 @@ export function TeamRolesTable() {
         const team = teamRes.data
 
         // Ask server to initiate invite and return a signed link
-        const initRes = await apiClient.post(`/invite/initiate`, { email, teamId, role })
-        const inviteLink = initRes.data?.inviteLink
+        let inviteLink = ''
+        try {
+            const initRes = await apiClient.post(`/invite/initiate`, { email, teamId, role })
+            inviteLink = initRes.data?.inviteLink
+        } catch (e: any) {
+            const status = e?.response?.status
+            if (status === 403) {
+                toast.error('Team member limit reached', {
+                    description: 'Upgrade your plan to invite more users.',
+                    action: { label: 'View Pricing', onClick: () => (window.location.href = '/pricing') },
+                })
+            } else {
+                toast.error('Failed to initiate invite')
+            }
+            return
+        }
 
         const webhook = process.env.NEXT_PUBLIC_INVITE_WEBHOOK ?? ''
         await axios.post(webhook, {
@@ -40,6 +55,7 @@ export function TeamRolesTable() {
             role,
             url: inviteLink,
         }, { headers: { 'Content-Type': 'application/json' } })
+        toast.success('Invite sent')
     }
 
     if (!user) return <></>

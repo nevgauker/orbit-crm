@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import axios from "axios";
+import { toast } from "sonner";
 
 interface TeamCreationFormProps {
   onTeamCreated?: (teamId: string) => void; // Optional callback after successful creation
@@ -34,11 +35,26 @@ export default function TeamCreationForm({ onTeamCreated }: TeamCreationFormProp
         alert("Team created successfully!");
       }
     } catch (err: unknown) {
-      // Narrow the error type
       if (axios.isAxiosError(err)) {
-        setError(err.response?.data?.message || "Failed to create team. Please try again.");
+        const status = err.response?.status
+        const message = (err.response?.data as any)?.error || (err.response?.data as any)?.message || err.message
+        setError(message || "Failed to create team. Please try again.")
+        if (status === 403) {
+          toast.error("Team limit reached for your plan", {
+            description: "Upgrade to create more teams.",
+            action: {
+              label: "View Pricing",
+              onClick: () => {
+                window.location.href = "/pricing"
+              },
+            },
+          })
+        } else {
+          toast.error("Failed to create team")
+        }
       } else {
         setError("An unexpected error occurred. Please try again.");
+        toast.error("Unexpected error")
       }
     } finally {
       setLoading(false);
